@@ -26,8 +26,6 @@ const [data,setData] = useState()
   }, []);
 
 
-
-
   return (
     <Carousel
     showArrows={true}

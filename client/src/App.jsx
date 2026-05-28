@@ -28,9 +28,6 @@ import TestimonialCardSlider from './compnents/testimonialCard/TestimonialCardSl
 import Form from "./compnents/Form"
 import SelectButton from '../src/compnents/filtreButtons'
 
-
-
-
 function App() {
 
   let mentorId = useParams()

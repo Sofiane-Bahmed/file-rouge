@@ -22,7 +22,7 @@ const navigate = useNavigate()
                 const userResponse = JSON.stringify(res.data.user )
                
                 localStorage.user = userResponse
-                localStorage.avatarUrl = userResponse.avatarUrl
+                localStorage.avatarUrl = res.data.user.avatarUrl
                 navigate("/")
             })  
             .catch(error => {

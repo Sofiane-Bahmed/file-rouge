@@ -19,7 +19,7 @@ import { mentorshipRequestRouter } from "./routers/mentorshipRequestRouter.js"
 import { messageRouter } from "./routers/messageRouter.js";
 
 dotenv.config();
-const port = process.env.PORT;
+const port = process.env.PORT || 8082;
 const dbURI = process.env.DBURI;
 
 const app = express();

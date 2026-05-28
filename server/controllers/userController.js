@@ -60,8 +60,6 @@ export const createUser = async (req, res) => {
         mail,
         password: hashedPassword,
       });
-
-     
       await mentor.save();
       res.json(mentor);
     } catch (error) {
@@ -95,16 +93,23 @@ export const logIn = async (req, res) => {
     res.cookie("auth-token", { authToken }, {
       maxAge: 60 * 60 * 24 * 1000,
       httpOnly: true,
-      sameSite: "None",
-      secure: true
+      sameSite: "Lax",
+      secure: false
     });
 
-    res.cookie("userId", { userId });
-    res.cookie("userRole", { userRole });
-    res.status(200).json({message:"user loged in succesfully",user: {userId, userRole, avatarUrl: user.image.url}});
+    res.cookie("userId", userId);
+    res.cookie("userRole", userRole);
     
+    const avatarUrl = user.image?.url || "";
+    
+    res.status(200).json({ 
+      message: "user loged in succesfully", 
+      user: { userId, userRole, avatarUrl } 
+    });
+
   } catch (error) {
-    console.log(error);
+    console.error(error);
+    res.status(500).json({ message: "An error occurred during login", error: error.message });
   }
 };
 

@@ -1,4 +1,4 @@
-# Fabrik Mentorship Platform 🚀
+# Mentorship Platform 🚀
 
 [![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](https://opensource.org/licenses/ISC)
 [![React](https://img.shields.io/badge/Frontend-React-61DAFB?logo=react)](https://reactjs.org/)
@@ -60,7 +60,7 @@ A comprehensive full-stack mentorship portal developed as the final project (**F
     ```
     Create a `.env` file in the `server` directory:
     ```env
-    PORT=5000
+    PORT=8082
     DBURI=your_mongodb_connection_string
     CLOUDINARY_CLOUD_NAME=your_name
     CLOUDINARY_API_KEY=your_key
