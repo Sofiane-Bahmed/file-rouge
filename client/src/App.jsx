@@ -46,7 +46,7 @@ function App() {
             <>
               <NavBar />
               <Hero />
-              <div className="relative z-10 -mt-16 md:-mt-24 lg:-mt-32 px-4">
+              <div className="relative z-10 mt-0 md:-mt-24 lg:-mt-32 px-4">
                 <ServiceContainer />
               </div>
               <section className="mt-20">
