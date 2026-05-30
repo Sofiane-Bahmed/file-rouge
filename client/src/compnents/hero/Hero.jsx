@@ -54,9 +54,9 @@ const Hero = () => {
                             <Search />
 
                         </div>
-                        <div className='flex-1 hidden md:block'>
+                        <div className='flex-1 hidden md:block relative'>
                             {/* Replace with your image */}
-                            <img src={heroImage} className="max-w-2xl relative -top-40" />
+                            <img src={heroImage} className="max-w-2xl relative -top-20 md:-top-32" />
                         </div>
                     </div>
                   

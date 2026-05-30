@@ -2,12 +2,16 @@ import ServiceItem from "./serviceItem"
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
+import blurServices from "../../assets/blurServices.png"
 
 const ServiceContainer = (props) => {
 
   return (
     
-    <div className="container-xxl py-5  bg-[url('src/assets/blurServices.png')] bg-cover bg-center rounded-full relative -top-70 text-center  ">
+    <div 
+      className="container-xxl py-12 bg-cover bg-center rounded-[3rem] relative z-10 shadow-xl text-center max-w-6xl mx-auto"
+      style={{ backgroundImage: `url(${blurServices})` }}
+    >
     <div className="container bg-transparent items-center ">
       <Carousel
         showArrows={true}

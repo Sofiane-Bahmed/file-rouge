@@ -126,8 +126,6 @@ export const logOut = async (req, res) => {
   }
 };
 
-
-
 // update a user :
 
 export const updateUser = async (req, res) => {

@@ -23,7 +23,7 @@ const Search = ({ onSearch }) => {
   return (
     <form
       onSubmit={handleSearch}
-      className="max-w-md px-4 mx-auto mt-20 bg-white bg-opacity-20 backdrop-filter backdrop-blur-2 saturate-180"
+      className="max-w-md px-4 mx-auto mt-10 bg-white bg-opacity-20 backdrop-filter backdrop-blur-2 saturate-180"
     >
       <div className="relative shadow-2xl rounded-full">
         <svg
