@@ -8,7 +8,7 @@ const Hero = () => {
 
     return (
         <div className='relative bg-[#f9fff5] overflow-hidden'>
-            <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
+            <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-20 md:pt-10 md:pb-32 lg:pb-40">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
                     <div className='space-y-8 relative z-10'>
                         <div className='absolute -top-20 -left-20 blur-3xl h-[400px] w-[400px] bg-[#AAD4C1]/20 rounded-full -z-10'></div>
