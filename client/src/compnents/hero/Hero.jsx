@@ -7,8 +7,13 @@ import heroImage from "../../assets/heroImg.png"
 const Hero = () => {
 
     return (
-        <div className='relative bg-[#f9fff5] overflow-hidden'>
+        <div className='relative bg-gradient-to-b from-white via-[#f9fff5] to-[#f0f9f1] overflow-hidden'>
             <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-20 md:pt-10 md:pb-32 lg:pb-40">
+                {/* Modern subtle mesh background effect */}
+                <div className="absolute top-0 left-0 w-full h-full opacity-40 pointer-events-none">
+                    <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-gradient-radial from-[#57F2CC]/20 to-transparent rounded-full blur-3xl"></div>
+                    <div className="absolute bottom-[-10%] left-[-10%] w-[400px] h-[400px] bg-gradient-radial from-[#AAD4C1]/20 to-transparent rounded-full blur-3xl"></div>
+                </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
                     <div className='space-y-8 relative z-10'>
                         <div className='absolute -top-20 -left-20 blur-3xl h-[400px] w-[400px] bg-[#AAD4C1]/20 rounded-full -z-10'></div>
