@@ -23,9 +23,9 @@ const Search = ({ onSearch }) => {
   return (
     <form
       onSubmit={handleSearch}
-      className="max-w-md px-4 mx-auto mt-10 bg-white bg-opacity-20 backdrop-filter backdrop-blur-2 saturate-180"
+      className="w-full bg-white bg-opacity-20 backdrop-filter backdrop-blur-sm saturate-180 rounded-full"
     >
-      <div className="relative shadow-2xl rounded-full">
+      <div className="relative shadow-lg rounded-full">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className="absolute top-0 bottom-0 w-6 h-6 my-auto text-gray-400 left-3 cursor-pointer"

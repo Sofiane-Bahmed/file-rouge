@@ -1,33 +1,29 @@
 
-import "../../compnents/hero/hero.css"
 import { TypeAnimation } from 'react-type-animation';
- 
+
 import Search from "../search/Search"
 import heroImage from "../../assets/heroImg.png"
-
 
 const Hero = () => {
 
     return (
-        <div className='relative  '>
-            <div className='relative'>
+        <div className='relative bg-[#f9fff5] overflow-hidden'>
+            <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                    <div className='space-y-8 relative z-10'>
+                        <div className='absolute -top-20 -left-20 blur-3xl h-[400px] w-[400px] bg-[#AAD4C1]/20 rounded-full -z-10'></div>
 
-                <section className="h-auto">
-                    <div className="  px-4 py-20 gap-12 text-gray-600 overflow-hidden md:px-8 md:flex bg-[#f9fff5] z-0">
-                        <div className='flex-none space-y-10 max-w-xl relative'>
-                            <div className='absolute inset-0 -top-20 right-10 blur-xl h-[580px] z-1 w-full bg-[#AAD4C1]/30 rounded-full'  ></div>
-
-                            <h1 className="text-4xl text-gray-800 font-extrabold sm:text-5xl z-0">
-                                Get mentorship on <br /> 
-                                <span className='text-[#007749]'> 
-                                    <TypeAnimation sequence={[
-                                    'web devlopment',
+                        <h1 className="text-4xl text-gray-900 font-extrabold sm:text-5xl lg:text-6xl leading-tight">
+                            Get mentorship on <br /> 
+                            <span className='text-[#007749]'> 
+                                <TypeAnimation sequence={[
+                                    'web development',
                                     1000,
                                     'marketing',
                                     1000,
                                     'web design',
                                     1000,
-                                    'Product manager',
+                                    'Product management',
                                     1000,
                                     'Digital marketing',
                                     1000,
@@ -37,36 +33,38 @@ const Hero = () => {
                                     1000,
                                     'Cybersecurity',
                                     1000,
-
                                 ]}
                                     speed={60}
                                     className='text-accent'
                                     wrapper='span'
                                     repeat={Infinity}
                                 />
-                                
-                                </span>   
-                            </h1>
-                      
-                            <p className="mt-8">
-                                Sed ut perspiciatis unde omnis iste natus voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae.
-                            </p>
-                            <Search />
+                            </span>   
+                        </h1>
 
-                        </div>
-                        <div className='flex-1 hidden md:block relative'>
-                            {/* Replace with your image */}
-                            <img src={heroImage} className="max-w-2xl relative -top-20 md:-top-32" />
+                        <p className="text-lg text-gray-600 max-w-lg">
+                            Connect with expert mentors and accelerate your career. Our community of professionals is here to guide you through every step of your journey.
+                        </p>
+
+                        <div className="max-w-md">
+                            <Search />
                         </div>
                     </div>
-                  
-                </section>
-            </div>
+
+                    <div className='hidden md:block relative'>
+                        <div className='absolute -bottom-10 -right-10 blur-2xl h-[300px] w-[300px] bg-[#57F2CC]/10 rounded-full'></div>
+                        <img 
+                            src={heroImage} 
+                            alt="Mentorship Hero"
+                            className="w-full h-auto object-contain transform hover:scale-105 transition-transform duration-500 drop-shadow-2xl" 
+                        />
+                    </div>
+                </div>
+            </section>
         </div>
-        
     )
 }
 
-  
-  export default Hero;
+
+export default Hero;
 
