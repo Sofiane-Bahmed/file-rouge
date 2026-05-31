@@ -1,9 +1,9 @@
 
 import './App.css'
-import { Routes, Route, useParams  } from "react-router-dom"
+import { Routes, Route, useParams } from "react-router-dom"
 import { useState } from 'react'
 
- {/* Pages */} 
+{/* Pages */ }
 import SignUp from "./pages/signUp/SignUp"
 import LogIn from "./pages/logIn/LogIn"
 import Mentors from "./pages/mentors/Mentors"
@@ -13,7 +13,7 @@ import Messages from "./pages/messages/Messages"
 import NotFound from './pages/page404'
 import About from "./pages/About"
 
-{/* Components*/}
+{/* Components*/ }
 import NavBar from "./compnents/navbar/NavBar"
 import Footer from "./compnents/footer/Footer"
 import MentorCard from './compnents/mentorCard/MentorCard'
@@ -23,7 +23,7 @@ import HeaderText from "../src/compnents/HeaderText"
 import FiltreButtons from "../src/compnents/filtreButtons"
 import Hero from "./compnents/hero/Hero"
 import MentorCardSlider from './compnents/mentorCard/MentorCardSlider'
-import Search from"./compnents/search/Search"
+import Search from "./compnents/search/Search"
 import TestimonialCardSlider from './compnents/testimonialCard/TestimonialCardSlider'
 import Form from "./compnents/Form"
 import SelectButton from '../src/compnents/filtreButtons'
@@ -31,7 +31,7 @@ import SelectButton from '../src/compnents/filtreButtons'
 function App() {
 
   let mentorId = useParams()
-  
+
   const [loginUser, setLoginUser] = useState(false)
 
   return (
@@ -65,7 +65,7 @@ function App() {
             </>
           } />
           <Route path="/mentors" element={
-            <Mentors/>
+            <Mentors />
           } />
 
           <Route path="/messages" element={
@@ -75,24 +75,22 @@ function App() {
             </>
           } />
           <Route path="/profilAprenant/:aprenantId" element={
-          <>
-            <NavBar  />
-            <ProfilAprenant />
-            <Footer />
-          </>
-        } />
-        <Route path="/profilMentor/:mentorId" element={
-          <>
-            <NavBar   />     
-            
-            <ProfilMentor />
-            <Footer />
-          </>
-        } />
+            <>
+              <NavBar />
+              <ProfilAprenant />
+              <Footer />
+            </>
+          } />
+          <Route path="/profilMentor/:mentorId" element={
+            <>
+
+              <ProfilMentor />
+            </>
+          } />
 
         </Routes >
       </div>
-      
+
     </>
   )
 }
