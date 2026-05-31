@@ -31,7 +31,7 @@ export const viewAprenantProfile = async (req, res) => {
 
 export const updateApprenantProfile = async (req, res) => {
 
-  const { domainInteret, studyLevel,availability, about, goal, firstName, lastName } = req.body;
+  const { domainInteret, studyLevel, availability, about, goal, firstName, lastName } = req.body;
   console.log(req.body);
   const aprenantId = req.params.id;
 
@@ -60,7 +60,7 @@ export const updateApprenantProfile = async (req, res) => {
 };
 
 
-// modifier son phyp de profil
+// modifier son photo de profil
 
 export const updateAprenantImage = async (req, res) => {
 
@@ -129,7 +129,7 @@ export const aprenantSessionHistory = async (req, res) => {
 
 // Consulter la liste des mentors disponibles 
 
-export const getAvailableMentors = async(req, res) => {
+export const getAvailableMentors = async (req, res) => {
   try {
     // Find all the mentors who are available
 
@@ -137,7 +137,7 @@ export const getAvailableMentors = async(req, res) => {
 
     // Return the list of mentors
 
-    res.status(200).json( mentors );
+    res.status(200).json(mentors);
   } catch (error) {
     console.log(error)
     res.status(500).json({ message: `Error getting available mentors: ${error.message}` });
@@ -259,8 +259,6 @@ export const filtreMentorsByPrice = async (req, res) => {
 
 export const filtreMentorsByskill = async (req, res) => {
   const { skills } = req.query;
-
-
   try {
 
     // filtrer for mentors with the specified skill
@@ -272,8 +270,6 @@ export const filtreMentorsByskill = async (req, res) => {
     res.status(500).json({ message: `Error searching for mentors: ${error.message}` });
   }
 };
-
-
 
 // filtrer des mentors par rating
 
@@ -290,7 +286,6 @@ export const filtreMentorsByRating = async (req, res) => {
     res.status(500).json({ message: `Error searching for mentors: ${error.message}` });
   }
 }
-
 
 // noter un mentor 
 
@@ -340,9 +335,6 @@ export const rateMentor = async (req, res) => {
   }
 };
 
-
-
-
 // filter les mentors :
 
 export const filtreMentors = async (req, res) => {
@@ -351,69 +343,67 @@ export const filtreMentors = async (req, res) => {
   const queryDomain = domain.split(",")
   const queryPrice = price.split(",")
 
-
-
   if (skills === "" & price === "" & domain !== "") {
-   
+
     try {
-  
-      const mentors = await Mentor.find({domain: { $in: queryDomain }});
-  
+
+      const mentors = await Mentor.find({ domain: { $in: queryDomain } });
+
       return res.status(200).json({ mentors });
     } catch (error) {
-       return res.status(500).json({ message: `Error searching for mentors: ${error.message}` });
+      return res.status(500).json({ message: `Error searching for mentors: ${error.message}` });
     }
   }
 
   if (domain === "" & skills !== "" & price === "") {
-   
+
     try {
-  
-      const mentors = await Mentor.find({skills: { $in: querySkills }});
-  
+
+      const mentors = await Mentor.find({ skills: { $in: querySkills } });
+
       return res.status(200).json({ mentors });
     } catch (error) {
-       return res.status(500).json({ message: `Error searching for mentors: ${error.message}` });
+      return res.status(500).json({ message: `Error searching for mentors: ${error.message}` });
     }
   }
 
   if (domain === "" & price !== "" & skills === "") {
-  
+
     try {
-  
-      const mentors = await Mentor.find({price: { $in: queryPrice }});
-  
+
+      const mentors = await Mentor.find({ price: { $in: queryPrice } });
+
       return res.status(200).json({ mentors });
     } catch (error) {
-       return res.status(500).json({ message: `Error searching for mentors: ${error.message}` });
+      return res.status(500).json({ message: `Error searching for mentors: ${error.message}` });
     }
   }
 
   if (skills === "" & domain === "" & price === "") {
-  
+
     try {
-  
+
       const mentors = await Mentor.find();
-  
+
       return res.status(200).json({ mentors });
     } catch (error) {
-       return res.status(500).json({ message: `Error searching for mentors: ${error.message}` });
+      return res.status(500).json({ message: `Error searching for mentors: ${error.message}` });
     }
-    
+
   }
 
-if (skills !== "" & domain !== "" & price !== "") {
-  try {
+  if (skills !== "" & domain !== "" & price !== "") {
+    try {
 
 
-    // filtrer for mentors with the specified skill
+      // filtrer for mentors with the specified skill
 
-    const mentors = await Mentor.find({ skills: { $in: querySkills },domain: { $in: queryDomain }, price: { $in: queryPrice }});
+      const mentors = await Mentor.find({ skills: { $in: querySkills }, domain: { $in: queryDomain }, price: { $in: queryPrice } });
 
-    res.status(200).json({ mentors });
-  } catch (error) {
-    res.status(500).json({ message: `Error searching for mentors: ${error.message}` });
+      res.status(200).json({ mentors });
+    } catch (error) {
+      res.status(500).json({ message: `Error searching for mentors: ${error.message}` });
+    }
   }
-}
-  
+
 };

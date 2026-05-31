@@ -7,7 +7,7 @@ import heroImage from "../../assets/heroImg.png"
 const Hero = () => {
 
     return (
-        <div className='relative bg-gradient-to-b from-white via-[#f9fff5] to-[#f0f9f1] overflow-hidden'>
+        <div className='relative bg-[#f0f9f1] overflow-hidden'>
             <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-20 md:pt-10 md:pb-32 lg:pb-40">
                 {/* Modern subtle mesh background effect */}
                 <div className="absolute top-0 left-0 w-full h-full opacity-40 pointer-events-none">

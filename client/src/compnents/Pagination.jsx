@@ -29,7 +29,7 @@ const Pagination = ({ onPageChange, totalPages }) => {
 
   return (
     
-      <div className="max-w-screen-xl mx-auto mt-12 px-4 text-gray-600 md:px-8 mb-28 ">
+      <div className="max-w-screen-lg mx-auto mt-12 px-4 text-gray-600 mb-28 ">
         <div className="hidden items-center justify-between sm:flex" aria-label="Pagination">
           <button
             onClick={() => handlePageChange(currentPage - 1)}

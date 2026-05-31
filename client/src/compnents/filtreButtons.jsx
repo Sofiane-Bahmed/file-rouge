@@ -267,9 +267,9 @@ const FiltreButtons = ({ setData }) => {
 
   return (
     <>
-      <div className='w-full flex items-center justify-center  '>
-        <div className='w-1/2 flex justify-around items-center flex-wrap p-20  '>
-          <div Name="flex items-center justify-center p-4 " >
+      <div className='w-full flex items-center justify-center mb-10'>
+        <div className='max-w-screen-lg w-full flex justify-center items-center gap-4 flex-wrap px-4'>
+          <div className="relative" >
             <button onClick={test} id="dropdownDefault" data-dropdown-toggle="dropdown "
               className="mb-7   shadow-green-100 text-black bg-transparent  font-medium rounded-full text-sm px-4 py-2.5 text-center inline-flex items-center border  shadow-lg outline-none appearance-none focus:border-indigo-600 "
               type="button">

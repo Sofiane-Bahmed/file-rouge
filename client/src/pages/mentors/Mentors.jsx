@@ -102,28 +102,51 @@ const Mentors = () => {
 
 
   return (
-    <>
-        <NavBar />
-      <Search onSearch={handleSearch} />
+    <div className="min-h-screen bg-white">
+      <NavBar />
+      
+      <div className="max-w-screen-lg mx-auto px-4 pt-12 pb-6">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">
+            Find Your Next <span className="text-[#007749]">Mentor</span>
+          </h1>
+          <p className="text-gray-600 max-w-2xl mx-auto">
+            Browse through our community of expert professionals and find the perfect match to guide your career growth.
+          </p>
+        </div>
+        
+        <div className="max-w-2xl mx-auto">
+          <Search onSearch={handleSearch} />
+        </div>
+      </div>
+
       <FiltreButtons setData={setData} />
 
       {/* Conditional rendering based on isLoading */}
-      {isLoading ? (
-        <Loader /> // Show the Loader component while data is being fetched
-      ) : (
-        <>
-          {displayedMentors.map((mentor) => (
-            <MentorCard key={mentor._id} mentor={mentor} />
-          ))}
-          <Pagination
-            currentPage={currentPage}
-            totalPages={Math.ceil((searchQuery ? filteredMentors.length : data.length) / mentorsPerPage)}
-            onPageChange={handlePageChange}
-          />
-        </>
-      )}
+      <div className="max-w-screen-lg mx-auto px-4 pb-20">
+        {isLoading ? (
+          <Loader /> // Show the Loader component while data is being fetched
+        ) : (
+          <>
+            <div className="space-y-8">
+              {displayedMentors.map((mentor) => (
+                <MentorCard key={mentor._id} mentor={mentor} />
+              ))}
+            </div>
+            
+            <div className="mt-12">
+              <Pagination
+                currentPage={currentPage}
+                totalPages={Math.ceil((searchQuery ? filteredMentors.length : data.length) / mentorsPerPage)}
+                onPageChange={handlePageChange}
+              />
+            </div>
+          </>
+        )}
+      </div>
+      
       <Footer />
-    </>
+    </div>
   );
 };
 
