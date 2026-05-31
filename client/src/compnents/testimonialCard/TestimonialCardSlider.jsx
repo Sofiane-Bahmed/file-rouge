@@ -13,7 +13,7 @@ import "./testimonialCard.css"
 
 const TestimonialCardSlider = () => {
     return (
-        <div className='testimonial-background px-4 py-10'>
+        <div className='testimonial-background px-4 py-4 rounded-3xl overflow-hidden'>
             <div className="max-w-7xl mx-auto">
                 <Swiper
                     modules={[Autoplay, Pagination, Navigation]}
@@ -29,9 +29,9 @@ const TestimonialCardSlider = () => {
                     }}
                     pagination={{
                         clickable: true,
-                        dynamicBullets: true
+                        dynamicBullets: true,
                     }}
-                    navigation={true}
+                    navigation={false}
                     breakpoints={{
                         640: {
                             slidesPerView: 1,

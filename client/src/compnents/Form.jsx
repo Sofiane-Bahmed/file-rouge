@@ -60,7 +60,7 @@ const Form = ({ data, onCancel, refetch }) => {
                     <h2 className="text-2xl font-bold text-gray-900">Edit Profile</h2>
                     <p className="text-sm text-gray-500">Update your professional information</p>
                 </div>
-                <button 
+                <button
                     onClick={() => onCancel(false)}
                     className="p-2 hover:bg-gray-200 rounded-full transition-colors text-gray-400 hover:text-gray-600"
                 >
@@ -185,12 +185,12 @@ const Form = ({ data, onCancel, refetch }) => {
                         </div>
                         <div className="flex flex-wrap gap-2">
                             {skills.map((skill, idx) => (
-                                <span 
-                                    key={idx} 
+                                <span
+                                    key={idx}
                                     className="flex items-center gap-2 px-3 py-1.5 bg-[#F0F9F1] text-[#007749] rounded-full text-sm font-bold border border-[#AAD4C1]/30 group hover:border-[#007749] transition-all"
                                 >
                                     {skill}
-                                    <button 
+                                    <button
                                         type="button"
                                         onClick={() => removeSkill(skill)}
                                         className="text-[#007749]/50 hover:text-red-500 transition-colors"

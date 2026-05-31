@@ -46,21 +46,31 @@ function App() {
             <>
               <NavBar />
               <Hero />
-              <div className="relative z-10 mt-0 md:-mt-24 lg:-mt-32 px-4">
+              <div className="relative z-10 mt-0 md:-mt-24 lg:-mt-32 px-4 max-w-7xl mx-auto">
                 <ServiceContainer />
               </div>
-              <section className="mt-20">
-                <HeaderText text={"About us"} />
-                <About />
+
+              <section className="py-20 md:py-28">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                  <HeaderText text={"About us"} />
+                  <About />
+                </div>
               </section>
-              <section className="flex-grow bg-[#f9fff5]">
-                <HeaderText text={"Mentees testimonials"} />
-                <TestimonialCardSlider />
+
+              <section className="py-20 md:py-28 bg-[#f9fff5] border-t border-b border-gray-100">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                  <HeaderText text={"Mentees testimonials"} />
+                  <TestimonialCardSlider />
+                </div>
               </section>
-              <section className="flex-grow bg-[#f9fff5]">
-                <HeaderText text={"Best mentors "} />
-                <MentorCardSlider />
+
+              <section className="py-20 md:py-28">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                  <HeaderText text={"Best mentors "} />
+                  <MentorCardSlider />
+                </div>
               </section>
+
               <Footer />
             </>
           } />

@@ -5,7 +5,7 @@ import aboutPhoto from "../../assets/aboutImage.png"
 
 const AboutContainer = () => {
   return (
-    <div className="container-xxl py-5 px-5 m-10 rounded-3xl  ">
+    <div className="container-xxl py-5 rounded-3xl  ">
       <div className="container bg-white ">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
           <div

@@ -89,7 +89,7 @@ const NavBar = () => {
                         key={item.name}
                         to={item.href}
                         className={classNames(
-                          item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-[#007749] hover:text-white',
+                          item.current ? 'bg-[#007749] text-white' : 'text-gray-700 hover:bg-[#007749] hover:text-white',
                           'rounded-md px-3 py-2 text-sm font-medium'
                         )}
                         aria-current={item.current ? 'page' : undefined}
@@ -173,7 +173,7 @@ const NavBar = () => {
                 ) : (
                   <Link
                     to="/logIn"
-                    className="text-gray-300 hover:bg-[#007749] hover:text-white rounded-md px-3 py-2 text-sm font-medium"
+                    className="text-gray-700 hover:bg-[#007749] hover:text-white rounded-md px-3 py-2 text-sm font-medium"
                   >
                     Login
                   </Link>
@@ -190,7 +190,7 @@ const NavBar = () => {
                   as={Link}
                   to={item.href}
                   className={classNames(
-                    item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-[#007749] hover:text-white',
+                    item.current ? 'bg-[#007749] text-white' : 'text-gray-700 hover:bg-[#007749] hover:text-white',
                     'block rounded-md px-3 py-2 text-base font-medium'
                   )}
                   aria-current={item.current ? 'page' : undefined}

@@ -9,7 +9,7 @@ const ServiceItem = (props) => {
         {props.service}
       </h5>
       
-      <p className="text-gray-100 text-xs md:text-sm leading-snug opacity-80 group-hover:opacity-100 transition-opacity duration-300 max-w-[220px]">
+      <p className="text-gray-100 text-xs md:text-sm leading-snug opacity-80 group-hover:opacity-100 transition-opacity duration-300 max-w-[280px] md:max-w-[220px]">
         {props.text}
       </p>
     </div>
