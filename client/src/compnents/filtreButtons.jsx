@@ -1,403 +1,156 @@
 import React, { useState, useEffect, useRef } from 'react';
+import axios from "axios";
 
-import axios from "axios"
+const FilterDropdown = ({ title, options, selectedItems, onToggle, isOpen, onOpen }) => {
+  const dropdownRef = useRef(null);
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target) && isOpen) {
+        onOpen(null);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isOpen, onOpen]);
 
-// const SelectButton = ({ handleSkillChange, selectedSkills }) => {
+  return (
+    <div className="relative" ref={dropdownRef}>
+      <button
+        onClick={() => onOpen(isOpen ? null : title)}
+        className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-full border transition-all duration-200 ${
+          selectedItems.length > 0
+            ? "bg-[#007749] text-white border-[#007749] shadow-md"
+            : "bg-white text-gray-700 border-gray-200 hover:border-[#007749] hover:text-[#007749]"
+        }`}
+      >
+        <span>{title}</span>
+        {selectedItems.length > 0 && (
+          <span className="flex items-center justify-center w-5 h-5 text-[10px] bg-white text-[#007749] rounded-full font-bold">
+            {selectedItems.length}
+          </span>
+        )}
+        <svg
+          className={`w-4 h-4 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
 
-//   const skills = ['Apple', 'Fitbit', 'Dell', 'Asus', 'Logitech', 'MSI', 'Bosch', 'Sony', 'Samsung', 'Canon', 'Microsoft', 'Razor'];
-
-//   const [isOpen, setIsOpen] = useState(false);
-
-//   const toggleDropdown = () => {
-//     setIsOpen(!isOpen);
-//   };
-
-//   const handleCheckboxChange = (event) => {
-//     const skill = event.target.value;
-//     const isChecked = event.target.checked;
-
-//     if (isChecked) {
-//       handleSkillChange([...selectedSkills, skill]);
-//     } else {
-//       const updatedSkills = selectedSkills.filter((selectedSkill) => selectedSkill !== skill);
-//       handleSkillChange(updatedSkills);
-//     }
-//   };
-
-// return (
-
-// <div classNameName='w-full flex items-center justify-center mb-14'>
-//   <div classNameName='w-1/2 flex items-center justify-around flex-wrap'>
-//     <div classNameName="relative  max-w-xs mx-auto mt-12">
-//     <svg
-//         xmlns="http://www.w3.org/2000/svg"
-//         classNameName="absolute top-0 bottom-0 w-6 h-6 my-auto text-gray-400 right-2.5"
-//         viewBox="0 0 20 20"
-//         fill="currentColor"
-//       >
-//         <path
-//           fillRule="evenodd"
-//           d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-//           clipRule="evenodd"
-//         />
-//       </svg>
-//       <label classNameName="inline-flex items-center mt-2">
-//           <input
-//             type="checkbox"
-//             classNameName="form-checkbox h-4 w-4 text-indigo-600 transition duration-150 ease-in-out"
-//             value="Software engineer"
-//             checked={skills.includes('Software engineer')}
-//             onChange={() => handleSkillToggle('Software engineer')}
-//           />
-//           <span classNameName="ml-2">Software engineer</span>
-//         </label>
-//     </div>
-// <div classNameName="relative max-w-xs mx-auto mt-12">
-//   <svg xmlns="http://www.w3.org/2000/svg" classNameName="absolute top-0 bottom-0 w-6 h-6 my-auto text-gray-400 right-2.5" viewBox="0 0 20 20" fill="currentColor">
-//     <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-//   </svg>
-//   <select classNameName="w-full p-2.5 text-gray-500 bg-white border rounded-full shadow-sm outline-none appearance-none focus:border-indigo-600 text-center  shadow-cyan-600">
-//     <option disabled selected>Rating</option>
-//     <option>Software engineer</option>
-//     <option>IT manager</option>
-//     <option>UI / UX designer</option>
-//   </select>
-// </div>
-//     <div classNameName="relative max-w-xs mx-auto mt-12">
-//       <svg xmlns="http://www.w3.org/2000/svg" classNameName="absolute top-0 bottom-0 w-6 h-6 my-auto text-gray-400 right-2.5" viewBox="0 0 20 20" fill="currentColor">
-//         <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-//       </svg>
-//       <select classNameName="w-full p-2.5 text-gray-500 bg-white border rounded-full shadow-sm outline-none appearance-none focus:border-indigo-600 text-center  shadow-cyan-600  ">
-//         <option disabled selected>Price</option>
-//         <option>Software engineer</option>
-//         <option>IT manager</option>
-//         <option>UI / UX designer</option>
-//       </select>
-//     </div>
-
-//   </div>
-// </div>
-
-//     <div classNameName="flex items-center justify-center p-4">
-//       <button
-//         id="dropdownDefault"
-//         data-dropdown-toggle="dropdown"
-//         classNameName="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-//         type="button"
-//         onClick={toggleDropdown}
-//       >
-//         Filter by category
-//         <svg classNameName="w-4 h-4 ml-2" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-//           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-//         </svg>
-//       </button>
-//       {isOpen && (
-//         <div id="dropdown" classNameName="z-10 hidden w-56 p-3 bg-white rounded-lg shadow dark:bg-gray-700">
-//           <h6 classNameName="mb-3 text-sm font-medium text-gray-900 dark:text-white">Category</h6>
-//           <ul classNameName="space-y-2 text-sm" aria-labelledby="dropdownDefault">
-//             {skills.map((skill) => (
-//               <li key={skill} classNameName="flex items-center">
-//                 <input
-//                   id={skill.toLowerCase()}
-//                   type="checkbox"
-//                   value={skill}
-//                   checked={selectedSkills.includes(skill)}
-//                   classNameName="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
-//                   onChange={(event) => handleCheckboxChange(event)}
-//                 />
-//                 <label
-//                   htmlFor={skill.toLowerCase()}
-//                   classNameName="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100"
-//                 >
-//                   {skill} (56) {/* Replace with the appropriate count */}
-//                 </label>
-//               </li>
-//             ))}
-//           </ul>
-//         </div>
-//       )}
-//     </div>
-//   );
-// };
-
-
-
-// export default SelectButton
-
-
+      {isOpen && (
+        <div className="absolute z-50 mt-2 w-64 bg-white rounded-xl shadow-xl border border-gray-100 py-2 animate-in fade-in zoom-in duration-200">
+          <div className="px-4 py-2 border-b border-gray-50 mb-1">
+            <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">{title}</h3>
+          </div>
+          <ul className="max-h-60 overflow-y-auto px-2">
+            {options.map((option) => (
+              <li key={option}>
+                <label className="flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors group">
+                  <input
+                    type="checkbox"
+                    checked={selectedItems.includes(option)}
+                    onChange={() => onToggle(option)}
+                    className="w-4 h-4 text-[#007749] border-gray-300 rounded focus:ring-[#007749]"
+                  />
+                  <span className={`text-sm transition-colors ${selectedItems.includes(option) ? "text-[#007749] font-medium" : "text-gray-600 group-hover:text-gray-900"}`}>
+                    {option}
+                  </span>
+                </label>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+};
 
 const FiltreButtons = ({ setData }) => {
+  const skillsOptions = ["React", "Node.js", "JavaScript", "Python", "SQL", "Product Management", "Machine Learning", "Deep Learning", "Prototyping"];
+  const domainOptions = ["Full Stack Developer", "UX/UI Designer", "Product Manager", "Mobile App Developer", "Digital Marketing", "Data Scientist", "Graphic Designer", "Cybersecurity"];
+  const priceOptions = ["80", "90", "100", "110", "120", "130", "140", "150", "160", "170", "180", "190", "200", "210", "220", "230"];
 
-  const skillsTest = ["React", "Node.js", "JavaScript","Python","SQL","Product Management","Machine Learning","Deep Learning","Prototyping"]
-  const domainTest = ["Full Stack Developer", "UX/UI Designer", "Product Manager","Mobile App Developer","Digital Marketing","Data Scientist","Graphic Designer","Cybersecurity"]
-  const priceTest = ["80", "90", "100","110","120","130","140","150","160","170","180","190","200","210","220","230"]
-
-  const [dropDownState, setDropDownState] = useState(false)
-  const [skillsFilter, setSkillsFilter] = useState([])
-  const [domainFilter, setDomainFilter] = useState([])
-  const [priceFilter, setPriceFilter] = useState([])
-  // const [checkedState, setCheckedState] = useState(false)
-  const refTest = useRef(null)
-  const refTest2 = useRef(null)
-  const refTest3 = useRef(null)
-
-  const checkRefs = useRef([])
-  const checkRefs2 = useRef([])
-  const checkRefs3 = useRef([])
-
-
-
-  window.addEventListener("click", (event) => {
-
-    if (dropDownState) {
-
-      refTest?.current?.classList?.add("hidden");
-      refTest2?.current?.classList?.add("hidden");
-      refTest3?.current?.classList?.add("hidden");
-      setDropDownState(false)
-    }
-  })
-
-  window.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" & dropDownState) {
-
-      refTest?.current?.classList?.add("hidden");
-      refTest2?.current?.classList?.add("hidden");
-      refTest3?.current?.classList?.add("hidden");
-      setDropDownState(false)
-
-    }
-  })
+  const [activeDropdown, setActiveDropdown] = useState(null);
+  const [skillsFilter, setSkillsFilter] = useState([]);
+  const [domainFilter, setDomainFilter] = useState([]);
+  const [priceFilter, setPriceFilter] = useState([]);
 
   useEffect(() => {
     const filterMentors = async () => {
       try {
-       
         const response = await axios.get(`http://localhost:8082/aprenants/filtreMentors?skills=${skillsFilter}&domain=${domainFilter}&price=${priceFilter}`, {
           withCredentials: true
-        })
-        setData(response.data.mentors)
-        
+        });
+        setData(response.data.mentors);
       } catch (error) {
-        console.log({ error });
+        console.error("Error filtering mentors:", error);
       }
+    };
 
-    }
+    filterMentors();
+  }, [skillsFilter, domainFilter, priceFilter, setData]);
 
-    filterMentors()
-  }, [skillsFilter, domainFilter, priceFilter])
-
-
-
-  const test = (e) => {
-    e.preventDefault()
-
-    e.stopPropagation()
-
-    refTest.current.classList.toggle("hidden")
-    setDropDownState(true)
-  }
-  const test2 = (e) => {
-    e.preventDefault()
-
-    e.stopPropagation()
-
-    refTest2.current.classList.toggle("hidden")
-    setDropDownState(true)
-  }
-  const test3 = (e) => {
-    e.preventDefault()
-
-    e.stopPropagation()
-
-    refTest3.current.classList.toggle("hidden")
-    setDropDownState(true)
-  }
-
-
-
-  const handleCheckSkill = (e, i) => {
-    e.stopPropagation();
-    const isChecked = checkRefs.current[i].checked;
-    checkRefs.current[i].checked = isChecked;
-
-    setSkillsFilter((prevSkills) => {
-      if (isChecked) {
-        return [...prevSkills, skillsTest[i]];
-      } else {
-        return prevSkills.filter((skill) => skill !== skillsTest[i]);
-      }
-    });
-  };
-  const handleCheckDomain = (e, i) => {
-    e.stopPropagation();
-    const isChecked = checkRefs3.current[i].checked;
-    checkRefs3.current[i].checked = isChecked;
-
-    setDomainFilter((prevDomain) => {
-      if (isChecked) {
-        return [...prevDomain, domainTest[i]];
-      } else {
-        return prevDomain.filter((domain) => domain !== domainTest[i]);
-      }
-    });
-  };
-  const handleCheckPrice = (e, i) => {
-    e.stopPropagation();
-    const isChecked = checkRefs2.current[i].checked;
-    checkRefs2.current[i].checked = isChecked;
-
-    setPriceFilter((prevPrice) => {
-      if (isChecked) {
-        return [...prevPrice, priceTest[i]];
-      } else {
-        return prevPrice.filter((price) => price !== priceTest[i]);
-      }
-    });
+  const toggleItem = (item, filter, setFilter) => {
+    setFilter(prev => 
+      prev.includes(item) ? prev.filter(i => i !== item) : [...prev, item]
+    );
   };
 
-  useEffect(() => {
-    console.log({ skillsFilter });
-    console.log({ priceFilter });
-    console.log({ domainFilter });
-  }, [skillsFilter, priceFilter, domainFilter])
+  const clearFilters = () => {
+    setSkillsFilter([]);
+    setDomainFilter([]);
+    setPriceFilter([]);
+  };
 
-
+  const hasActiveFilters = skillsFilter.length > 0 || domainFilter.length > 0 || priceFilter.length > 0;
 
   return (
-    <>
-      <div className='w-full flex items-center justify-center mb-10'>
-        <div className='max-w-screen-lg w-full flex justify-center items-center gap-4 flex-wrap px-4'>
-          <div className="relative" >
-            <button onClick={test} id="dropdownDefault" data-dropdown-toggle="dropdown "
-              className="mb-7   shadow-green-100 text-black bg-transparent  font-medium rounded-full text-sm px-4 py-2.5 text-center inline-flex items-center border  shadow-lg outline-none appearance-none focus:border-indigo-600 "
-              type="button">
-              Skills
-              <svg className="w-4 h-4 ml-2" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-              </svg>
-            </button>
+    <div className="w-full mb-12">
+      <div className="max-w-screen-lg mx-auto px-4 flex flex-wrap items-center justify-center gap-4">
+        <FilterDropdown
+          title="Skills"
+          options={skillsOptions}
+          selectedItems={skillsFilter}
+          onToggle={(item) => toggleItem(item, skillsFilter, setSkillsFilter)}
+          isOpen={activeDropdown === "Skills"}
+          onOpen={setActiveDropdown}
+        />
+        
+        <FilterDropdown
+          title="Domain"
+          options={domainOptions}
+          selectedItems={domainFilter}
+          onToggle={(item) => toggleItem(item, domainFilter, setDomainFilter)}
+          isOpen={activeDropdown === "Domain"}
+          onOpen={setActiveDropdown}
+        />
 
+        <FilterDropdown
+          title="Price"
+          options={priceOptions}
+          selectedItems={priceFilter}
+          onToggle={(item) => toggleItem(item, priceFilter, setPriceFilter)}
+          isOpen={activeDropdown === "Price"}
+          onOpen={setActiveDropdown}
+        />
 
-
-
-            <div ref={refTest} id="dropdown" className="z-10 hidden w-56 p-3 bg-white rounded-lg shadow dark:bg-gray-700 ">
-              <h6 className="mb-3 text-sm font-medium text-gray-900 dark:text-white">
-                Skills
-              </h6>
-              <ul className="space-y-2 text-sm" aria-labelledby="dropdownDefault">
-                {skillsTest?.map((skill, i) => {
-                  return (
-                    <li className="flex items-center">
-                      <input id="apple" type="checkbox" value={skill} onClick={(e) => {
-                        handleCheckSkill(e, i)
-                      }} ref={(ref) => {
-                        return checkRefs.current[i] = ref
-                      }}
-                        className="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" />
-
-                      <label for="apple" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100">
-                        {skill}
-                      </label>
-                    </li>
-                  )
-                })}
-
-              </ul>
-            </div>
-
-          </div>
-
-
-
-          <div Name="flex items-center justify-center p-4 " >
-            <button onClick={test2} id="dropdownDefault" data-dropdown-toggle="dropdown"
-              className="mb-7 shadow-lg shadow-green-100 text-black bg-transparent font-medium rounded-full text-sm px-4 py-2.5 text-center inline-flex items-center border  outline-none appearance-none focus:border-indigo-600  "
-              type="button">
-              Price
-              <svg className="w-4 h-4 ml-2" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-              </svg>
-            </button>
-
-
-            <div ref={refTest2} id="dropdown" className="z-10 hidden w-56 p-3 bg-white rounded-lg shadow dark:bg-gray-700 ">
-              <h6 className="mb-3 text-sm font-medium text-gray-900 dark:text-white">
-                Price
-              </h6>
-              <ul className="space-y-2 text-sm" aria-labelledby="dropdownDefault">
-                {priceTest?.map((price, i) => {
-                  return (
-                    <li className="flex items-center">
-                      <input id="apple" type="checkbox" value={price} onClick={(e) => {
-                        handleCheckPrice(e, i)
-                      }} ref={(ref) => {
-                        return checkRefs2.current[i] = ref
-                      }}
-                        className="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" />
-
-                      <label for="apple" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100">
-                        {price}
-                      </label>
-                    </li>
-                  )
-                })}
-
-              </ul>
-            </div>
-          </div>
-
-          <div Name="flex items-center justify-center p-4 " >
-            <button onClick={test3} id="dropdownDefault" data-dropdown-toggle="dropdown"
-              className="mb-7 shadow-lg shadow-green-100 text-black bg-transparent  font-medium rounded-full text-sm px-4 py-2.5 text-center inline-flex items-center border  outline-none appearance-none focus:border-indigo-600   "
-              type="button">
-              Domain
-              <svg className="w-4 h-4 ml-2" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-              </svg>
-            </button>
-
-
-            <div ref={refTest3} id="dropdown" className="z-10 hidden w-56 p-3 bg-white rounded-lg shadow dark:bg-gray-700 ">
-              <h6 className="mb-3 text-sm font-medium text-gray-900 dark:text-white">
-                Domains
-              </h6>
-              <ul className="space-y-2 text-sm" aria-labelledby="dropdownDefault">
-                {domainTest?.map((domain, i) => {
-                  return (
-                    <li className="flex items-center">
-                      <input id="apple" type="checkbox" value={domain} onClick={(e) => {
-                        handleCheckDomain(e, i)
-                      }} ref={(ref) => {
-                        return checkRefs3.current[i] = ref
-                      }}
-                        className="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" />
-
-                      <label for="apple" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100">
-                        {domain}
-                      </label>
-                    </li>
-                  )
-                })}
-
-              </ul>
-            </div>
-          </div>
-        </div>
+        {hasActiveFilters && (
+          <button
+            onClick={clearFilters}
+            className="text-sm font-medium text-gray-500 hover:text-red-500 transition-colors flex items-center gap-1 px-2"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+            Clear All
+          </button>
+        )}
       </div>
+    </div>
+  );
+};
 
-
-    </>
-
-
-  )
-}
-
-export default FiltreButtons
-
-
-
+export default FiltreButtons;
