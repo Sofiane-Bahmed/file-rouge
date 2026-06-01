@@ -86,9 +86,7 @@ function App() {
           } />
           <Route path="/profilAprenant/:aprenantId" element={
             <>
-              <NavBar />
               <ProfilAprenant />
-              <Footer />
             </>
           } />
           <Route path="/profilMentor/:mentorId" element={
