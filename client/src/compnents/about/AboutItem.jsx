@@ -1,8 +1,10 @@
 const AboutItems = (props) => {
     return (
-      <div className="col-span-1 sm:col-span-2">
-        <p className="mb-0">
-          <i className="fa fa-arrow-right text-primary me-2"></i>
+      <div className="flex items-center space-x-3">
+        <div className="flex-shrink-0 w-6 h-6 rounded-full bg-[#57F2CC]/20 flex items-center justify-center">
+          <i className="fa fa-check text-[#57F2CC] text-xs"></i>
+        </div>
+        <p className="text-gray-700 font-medium leading-relaxed">
           {props.content}
         </p>
       </div>
