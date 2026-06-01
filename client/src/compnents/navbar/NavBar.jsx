@@ -40,6 +40,8 @@ const NavBar = () => {
       ? `/profilMentor/${user?.userId}`
       : `/profilAprenant/${user?.userId}`;
 
+  const dashboardURL = `/dashboardAprenant/${user?.userId}`;
+
 
   const handleLogout = async () => {
     try {
@@ -189,6 +191,15 @@ const NavBar = () => {
                               </Link>
                             )}
                           </Menu.Item>
+                          {user?.userRole === 'aprenant' && (
+                            <Menu.Item>
+                              {({ active }) => (
+                                <Link to={dashboardURL} className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}>
+                                  Dashboard
+                                </Link>
+                              )}
+                            </Menu.Item>
+                          )}
                           <Menu.Item>
                             {({ active }) => (
                               <a

@@ -9,6 +9,7 @@ import LogIn from "./pages/logIn/LogIn"
 import Mentors from "./pages/mentors/Mentors"
 import ProfilMentor from "./pages/profilMentor/ProfilMentor"
 import ProfilAprenant from "./pages/profilAprenant/ProfilAprenant"
+import DashboardAprenant from './pages/profilAprenant/DashboardAprenant'
 import Messages from "./pages/messages/Messages"
 import NotFound from './pages/page404'
 import About from "./pages/About"
@@ -91,6 +92,9 @@ function App() {
             <>
               <ProfilAprenant />
             </>
+          } />
+          <Route path="/dashboardAprenant/:aprenantId" element={
+            <DashboardAprenant />
           } />
           <Route path="/profilMentor/:mentorId" element={
             <>

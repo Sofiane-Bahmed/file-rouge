@@ -160,48 +160,6 @@ const ProfilAprenant = () => {
             <section>
               <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
                 <span className="w-8 h-1 bg-[#AAD4C1] mr-3 rounded-full"></span>
-                My Mentorship Requests
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {myRequests.length === 0 ? (
-                  <p className="text-gray-500 italic">No requests sent yet.</p>
-                ) : (
-                  myRequests.map((req) => (
-                    <div key={req._id} className="bg-gray-50 border border-gray-100 rounded-3xl p-5 hover:shadow-lg transition-shadow">
-                      <div className="flex items-center gap-3 mb-3">
-                        <img 
-                          src={req.mentor?.image?.url || "https://via.placeholder.com/50"} 
-                          className="w-10 h-10 rounded-full object-cover border border-[#AAD4C1]"
-                          alt="Mentor"
-                        />
-                        <div className="flex-1">
-                          <h4 className="font-bold text-gray-900">{req.mentor?.firstName} {req.mentor?.lastName}</h4>
-                          <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded ${
-                            req.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
-                            req.status === 'accepted' ? 'bg-green-100 text-green-700' :
-                            'bg-red-100 text-red-700'
-                          }`}>
-                            {req.status}
-                          </span>
-                        </div>
-                      </div>
-                      <p className="text-sm text-gray-600 mb-4 italic">"Your message: {req.message}"</p>
-                      
-                      {req.responseMessage && (
-                        <div className="bg-white rounded-2xl p-3 border border-gray-100">
-                          <span className="text-xs font-bold text-[#007749] block mb-1">Mentor's Response:</span>
-                          <p className="text-sm text-gray-700">"{req.responseMessage}"</p>
-                        </div>
-                      )}
-                    </div>
-                  ))
-                )}
-              </div>
-            </section>
-
-            <section>
-              <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-                <span className="w-8 h-1 bg-[#AAD4C1] mr-3 rounded-full"></span>
                 My Mentorship Sessions
               </h2>
               <div className="bg-gray-50 rounded-3xl p-6 border border-gray-100 overflow-hidden">
@@ -213,17 +171,18 @@ const ProfilAprenant = () => {
           {/* Sidebar / Quick Stats */}
           <div className="space-y-8">
             <div className="bg-white border border-gray-100 shadow-2xl shadow-gray-200/50 rounded-3xl p-8 sticky top-8">
-              <h3 className="text-xl font-bold text-gray-900 mb-6">Learning Progress</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-6">Quick Links</h3>
               
-              <div className="space-y-6">
-                <ProgressComponent />
-              </div>
-
               <div className="mt-8 pt-8 border-t border-gray-100">
-                <h4 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Quick Actions</h4>
-                <Link to="/mentors" className="w-full inline-flex items-center justify-center py-4 bg-[#007749] text-white font-bold rounded-2xl shadow-lg shadow-[#007749]/20 hover:bg-[#00663d] transition-all transform hover:scale-[1.02]">
-                  Find a New Mentor
-                </Link>
+                <h4 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Actions</h4>
+                <div className="space-y-4">
+                  <Link to={`/dashboardAprenant/${aprenantId}`} className="w-full inline-flex items-center justify-center py-4 bg-[#007749] text-white font-bold rounded-2xl shadow-lg shadow-[#007749]/20 hover:bg-[#00663d] transition-all transform hover:scale-[1.02]">
+                    Go to Dashboard
+                  </Link>
+                  <Link to="/mentors" className="w-full inline-flex items-center justify-center py-4 bg-white text-[#007749] border-2 border-[#007749] font-bold rounded-2xl hover:bg-gray-50 transition-all transform hover:scale-[1.02]">
+                    Find a New Mentor
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
