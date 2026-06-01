@@ -1,6 +1,6 @@
 import Table from "../../compnents/Table"
 import React, { useEffect, useState, useRef } from 'react'
-import { MdEdit, MdPhotoCamera } from 'react-icons/md';
+import { MdChat, MdEdit, MdPhotoCamera } from 'react-icons/md';
 import axios from 'axios'
 import { useParams, Link } from "react-router-dom";
 import FormAprenant from "../../compnents/AprenantForm";
@@ -21,9 +21,10 @@ const ProfilAprenant = () => {
 
   const localUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null;
   const isMentor = localUser?.userRole === "mentor";
+  const isOwner = localUser?.userId === aprenantId;
 
   const handleImageChange = async (event) => {
-    // ... existing code
+    // ... rest of the function remains same
   };
 
   useEffect(() => {
@@ -41,7 +42,7 @@ const ProfilAprenant = () => {
         try {
           const response = await axios.get(`http://localhost:8082/requests/getMentorship/${localUser.userId}`, { withCredentials: true });
           const requests = response.data?.requests || [];
-          const currentAprenantRequest = requests.find(req => req.aprenant?._id === aprenantId);
+          const currentAprenantRequest = requests.find(req => req.aprenant?._id.toString() === aprenantId.toString());
           if (currentAprenantRequest) {
             setMentorshipStatus(currentAprenantRequest.status);
           }
@@ -82,15 +83,17 @@ const ProfilAprenant = () => {
                   className={`w-full h-full object-cover object-center transition-opacity duration-300 ${isUploading ? 'opacity-50' : 'opacity-100'}`}
                 />
                 
-                {/* Upload Overlay */}
-                <button 
-                  onClick={() => fileInputRef.current.click()}
-                  className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                  disabled={isUploading}
-                >
-                  <MdPhotoCamera className="text-3xl mb-1" />
-                  <span className="text-xs font-bold uppercase tracking-wider">Update Photo</span>
-                </button>
+                {/* Upload Overlay - Only for Owner */}
+                {isOwner && (
+                  <button 
+                    onClick={() => fileInputRef.current.click()}
+                    className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                    disabled={isUploading}
+                  >
+                    <MdPhotoCamera className="text-3xl mb-1" />
+                    <span className="text-xs font-bold uppercase tracking-wider">Update Photo</span>
+                  </button>
+                )}
 
                 {/* Loading Spinner */}
                 {isUploading && (
@@ -113,7 +116,7 @@ const ProfilAprenant = () => {
                 <h1 className="text-4xl font-extrabold text-white">
                   {data?.firstName} {data?.lastName}
                 </h1>
-                {localUser?.userId === aprenantId && (
+                {isOwner && (
                   <button 
                     onClick={() => setIsEditing(true)}
                     className="p-2 bg-white/20 hover:bg-white/30 rounded-full text-white transition-colors"
@@ -178,35 +181,39 @@ const ProfilAprenant = () => {
               </div>
             </section>
 
-            <section>
-              <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-                <span className="w-8 h-1 bg-[#AAD4C1] mr-3 rounded-full"></span>
-                My Mentorship Sessions
-              </h2>
-              <div className="bg-gray-50 rounded-3xl p-6 border border-gray-100 overflow-hidden">
-                <Table aprenant={data} />
-              </div>
-            </section>
+            {isOwner && (
+              <section>
+                <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                  <span className="w-8 h-1 bg-[#AAD4C1] mr-3 rounded-full"></span>
+                  My Mentorship Sessions
+                </h2>
+                <div className="bg-gray-50 rounded-3xl p-6 border border-gray-100 overflow-hidden">
+                  <Table aprenant={data} />
+                </div>
+              </section>
+            )}
           </div>
 
-          {/* Sidebar / Quick Stats */}
-          <div className="space-y-8">
-            <div className="bg-white border border-gray-100 shadow-2xl shadow-gray-200/50 rounded-3xl p-8 sticky top-8">
-              <h3 className="text-xl font-bold text-gray-900 mb-6">Quick Links</h3>
-              
-              <div className="mt-8 pt-8 border-t border-gray-100">
-                <h4 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Actions</h4>
-                <div className="space-y-4">
-                  <Link to={`/dashboardAprenant/${aprenantId}`} className="w-full inline-flex items-center justify-center py-4 bg-[#007749] text-white font-bold rounded-2xl shadow-lg shadow-[#007749]/20 hover:bg-[#00663d] transition-all transform hover:scale-[1.02]">
-                    Go to Dashboard
-                  </Link>
-                  <Link to="/mentors" className="w-full inline-flex items-center justify-center py-4 bg-white text-[#007749] border-2 border-[#007749] font-bold rounded-2xl hover:bg-gray-50 transition-all transform hover:scale-[1.02]">
-                    Find a New Mentor
-                  </Link>
+          {/* Sidebar / Owner-only Quick Stats */}
+          {isOwner && (
+            <div className="space-y-8">
+              <div className="bg-white border border-gray-100 shadow-2xl shadow-gray-200/50 rounded-3xl p-8 sticky top-8">
+                <h3 className="text-xl font-bold text-gray-900 mb-6">Quick Links</h3>
+                
+                <div className="mt-8 pt-8 border-t border-gray-100">
+                  <h4 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Actions</h4>
+                  <div className="space-y-4">
+                    <Link to={`/dashboardAprenant/${aprenantId}`} className="w-full inline-flex items-center justify-center py-4 bg-[#007749] text-white font-bold rounded-2xl shadow-lg shadow-[#007749]/20 hover:bg-[#00663d] transition-all transform hover:scale-[1.02]">
+                      Go to Dashboard
+                    </Link>
+                    <Link to="/mentors" className="w-full inline-flex items-center justify-center py-4 bg-white text-[#007749] border-2 border-[#007749] font-bold rounded-2xl hover:bg-gray-50 transition-all transform hover:scale-[1.02]">
+                      Find a New Mentor
+                    </Link>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
 

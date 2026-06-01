@@ -5,12 +5,12 @@ import {viewAprenantProfile,updateApprenantProfile,aprenantSessionHistory,
     filtreMentorsByPrice,filtreMentorsByRating,rateMentor, filtreMentorsByskill, filtreMentors, updateAprenantImage }
      from "../controllers/aprenantController.js"
      
-import {aprenantAutorisation,} from "../middelwares/jwt.js"
+import {aprenantAutorisation, generalAutorisation} from "../middelwares/jwt.js"
 
 export const aprenantRouter = Express.Router()
 
 
-aprenantRouter.get("/viewAprenantProfile/:id",aprenantAutorisation,viewAprenantProfile)
+aprenantRouter.get("/viewAprenantProfile/:id", generalAutorisation, viewAprenantProfile)
 aprenantRouter.put("/updateApprenantProfile/:id",aprenantAutorisation,updateApprenantProfile)
 aprenantRouter.put("/updateApprenantProfileImage/:id",aprenantAutorisation,updateAprenantImage)
 aprenantRouter.get("/aprenantSessionHistory/:id",aprenantAutorisation,aprenantSessionHistory)

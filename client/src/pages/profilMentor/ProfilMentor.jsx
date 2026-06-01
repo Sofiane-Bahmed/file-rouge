@@ -1,6 +1,6 @@
 import Table from "../../compnents/Table"
 import React, { useEffect, useState, useRef } from 'react'
-import { MdChat, MdEdit, MdPhotoCamera } from 'react-icons/md';
+import { MdChat, MdEdit, MdPhotoCamera, MdPersonSearch } from 'react-icons/md';
 import Form from "../../compnents/Form";
 import axios from 'axios'
 import { useParams, Link } from "react-router-dom";
@@ -412,8 +412,27 @@ const ProfilMentor = () => {
                 </div>
                 <p className="text-gray-600 mb-6 line-clamp-3">"{req.message}"</p>
                 
+                <div className="flex gap-3 mt-auto">
+                  <Link 
+                    to={`/profilAprenant/${req.aprenant?._id}`}
+                    className="flex-1 flex items-center justify-center gap-1 py-2 bg-white text-gray-700 text-sm font-bold rounded-xl border border-gray-200 hover:bg-gray-50 transition-colors"
+                  >
+                    <MdPersonSearch className="text-lg" />
+                    Profile
+                  </Link>
+                  {req.status === 'accepted' && (
+                    <Link 
+                      to="/messages"
+                      className="flex-1 flex items-center justify-center gap-1 py-2 bg-[#007749] text-white text-sm font-bold rounded-xl hover:bg-[#00663d] transition-colors shadow-sm"
+                    >
+                      <MdChat className="text-lg" />
+                      Message
+                    </Link>
+                  )}
+                </div>
+
                 {req.status === 'pending' && (
-                  <div className="flex gap-3">
+                  <div className="flex gap-3 mt-4">
                     <button 
                       onClick={() => {
                         setSelectedRequestId(req._id);
