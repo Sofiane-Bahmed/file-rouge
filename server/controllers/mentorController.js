@@ -184,8 +184,6 @@ export const aprenantProgress = async (req, res) => {
 
 
 // consulter un aprenant specific : 
-
-
 export const getSpecificAprentice = async (req, res) => {
 
   const aprenantId = req.params.id

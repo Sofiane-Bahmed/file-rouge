@@ -36,21 +36,23 @@ import { Progress, ButtonGroup, Button, Row, Col } from 'rsuite';
 
 const ProgressComponent = () => {
   const [percent, setPercent] = useState(0);
+  const localUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null;
 
   useEffect(() => {
     // Fetch the apprentice's progress from the server
     const fetchProgress = async () => {
+      if (!localUser?.userId) return;
       try {
-        const response = await axios.get('http://localhost:8082/mentors/aprenantProgress'); // Replace with your actual API route to get apprentice progress
-        setPercent(response.data.progress);
-        console.log(response.data.progress)
+        const response = await axios.get(`http://localhost:8082/aprenants/viewAprenantProfile/${localUser.userId}`, { withCredentials: true });
+        const progressValue = response.data?.aprenant?.progress || 0;
+        setPercent(progressValue);
       } catch (error) {
         console.log('Error fetching progress:', error);
       }
     };
 
     fetchProgress();
-  }, []);
+  }, [localUser?.userId]);
 
   const decline = () => {
     const value = Math.max(percent - 10, 0);

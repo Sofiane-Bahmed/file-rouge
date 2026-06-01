@@ -3,6 +3,48 @@ import { Mentor } from '../models/mentor.js';
 import { MentorshipRequest } from '../models/mentorshipRequest.js';
 
 
+// create a mentorship request
+export const createMentorshipRequest = async (req, res) => {
+  try {
+    const { aprenantId, mentorId, message } = req.body;
+
+    // Check if a request already exists
+    const existingRequest = await MentorshipRequest.findOne({
+      aprenant: aprenantId,
+      mentor: mentorId,
+      status: { $in: ["pending", "accepted"] }
+    });
+
+    if (existingRequest) {
+      if (existingRequest.status === "pending") {
+        return res.status(400).json({ message: "A pending request already exists." });
+      } else {
+        return res.status(400).json({ message: "You are already mentored by this person." });
+      }
+    }
+
+    const newRequest = new MentorshipRequest({
+      aprenant: aprenantId,
+      mentor: mentorId,
+      message,
+    });
+
+    await newRequest.save();
+
+    // Update Aprenant and Mentor models
+    await Aprenant.findByIdAndUpdate(aprenantId, {
+      $push: { mentorshipsRequests: newRequest._id },
+    });
+    await Mentor.findByIdAndUpdate(mentorId, {
+      $push: { mentorshipsRequests: newRequest._id },
+    });
+
+    res.status(201).json({ message: "Mentorship request sent successfully", request: newRequest });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 // Consulter les demandes de mentorat
 
 export const getMentorshipRequests = async (req, res) => {

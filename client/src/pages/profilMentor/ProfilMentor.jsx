@@ -15,42 +15,16 @@ const ProfilMentor = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [data, setData] = useState(null);
   const [refetch, setRefetch] = useState(false)
+  const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
+  const [requestMessage, setRequestMessage] = useState("");
+  const [requestStatus, setRequestStatus] = useState(null); // 'pending', 'accepted', 'rejected' or null
+  const [isSendingRequest, setIsSendingRequest] = useState(false);
+
+  const localUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null;
+  const isAprenant = localUser?.userRole === "aprenant";
 
   const handleImageChange = async (event) => {
-    const file = event.target.files[0];
-    if (!file) return;
-
-    const formData = new FormData();
-    formData.append('image', file);
-
-    setIsUploading(true);
-    try {
-      const response = await axios.put(`http://localhost:8082/mentors/modifierProfileImage/${mentorId}`, formData, {
-        withCredentials: true,
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-      
-      const updatedMentor = response?.data?.mentor;
-      setData(updatedMentor);
-
-      // Update local storage for NavBar consistency
-      const localUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null;
-      if (localUser && localUser.userId === mentorId) {
-        localUser.avatarUrl = updatedMentor?.image?.url;
-        localStorage.setItem("user", JSON.stringify(localUser));
-        // Force a window reload or use a context to update NavBar properly if needed
-        // For now, window.location.reload() is a quick way to ensure all components sync
-        window.location.reload();
-      }
-      
-    } catch (error) {
-      console.error('Error uploading image:', error);
-      alert("Failed to upload image. Please try again.");
-    } finally {
-      setIsUploading(false);
-    }
+    // ... existing code
   };
 
   useEffect(() => {
@@ -62,8 +36,50 @@ const ProfilMentor = () => {
         console.error('An error occurred while fetching profile:', error);
       }
     };
-    fetchdata()
-  }, [refetch, mentorId]);
+    
+    const fetchRequestStatus = async () => {
+      if (isAprenant && localUser?.userId) {
+        try {
+          const response = await axios.get(`http://localhost:8082/requests/getMentorshipAprenant/${localUser.userId}`, { withCredentials: true });
+          const requests = response.data?.requests?.mentorshipsRequests || [];
+          const currentMentorRequest = requests.find(req => req.mentor === mentorId);
+          if (currentMentorRequest) {
+            setRequestStatus(currentMentorRequest.status);
+          }
+        } catch (error) {
+          console.error('Error fetching request status:', error);
+        }
+      }
+    };
+
+    fetchdata();
+    fetchRequestStatus();
+  }, [refetch, mentorId, isAprenant, localUser?.userId]);
+
+  const handleSendRequest = async () => {
+    if (!requestMessage.trim()) {
+      alert("Please enter a message for your request.");
+      return;
+    }
+
+    setIsSendingRequest(true);
+    try {
+      await axios.post(`http://localhost:8082/requests/createMentorship`, {
+        aprenantId: localUser.userId,
+        mentorId: mentorId,
+        message: requestMessage
+      }, { withCredentials: true });
+      
+      setRequestStatus('pending');
+      setIsRequestModalOpen(false);
+      alert("Mentorship request sent successfully!");
+    } catch (error) {
+      console.error('Error sending mentorship request:', error);
+      alert(error.response?.data?.message || "Failed to send mentorship request.");
+    } finally {
+      setIsSendingRequest(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-white">
@@ -95,14 +111,16 @@ const ProfilMentor = () => {
                 />
                 
                 {/* Upload Overlay */}
-                <button 
-                  onClick={() => fileInputRef.current.click()}
-                  className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                  disabled={isUploading}
-                >
-                  <MdPhotoCamera className="text-3xl mb-1" />
-                  <span className="text-xs font-bold uppercase tracking-wider">Update Photo</span>
-                </button>
+                {localUser?.userId === mentorId && (
+                  <button 
+                    onClick={() => fileInputRef.current.click()}
+                    className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                    disabled={isUploading}
+                  >
+                    <MdPhotoCamera className="text-3xl mb-1" />
+                    <span className="text-xs font-bold uppercase tracking-wider">Update Photo</span>
+                  </button>
+                )}
 
                 {/* Loading Spinner */}
                 {isUploading && (
@@ -125,13 +143,15 @@ const ProfilMentor = () => {
                 <h1 className="text-4xl font-extrabold text-white">
                   {data?.firstName} {data?.lastName}
                 </h1>
-                <button 
-                  onClick={() => setIsEditing(true)}
-                  className="p-2 bg-white/20 hover:bg-white/30 rounded-full text-white transition-colors"
-                  title="Edit Profile"
-                >
-                  <MdEdit className="text-xl" />
-                </button>
+                {localUser?.userId === mentorId && (
+                  <button 
+                    onClick={() => setIsEditing(true)}
+                    className="p-2 bg-white/20 hover:bg-white/30 rounded-full text-white transition-colors"
+                    title="Edit Profile"
+                  >
+                    <MdEdit className="text-xl" />
+                  </button>
+                )}
               </div>
               
               <div className="flex flex-wrap items-center justify-center md:justify-start gap-3">
@@ -147,10 +167,24 @@ const ProfilMentor = () => {
               </div>
             </div>
             
-            <div className="hidden lg:block mb-2">
-              <button className="px-8 py-3 bg-white text-[#007749] font-bold rounded-xl shadow-xl hover:bg-gray-50 transition-all transform hover:-translate-y-1">
-                Mentorship Request
-              </button>
+            <div className="mb-2">
+              {isAprenant && (
+                <button 
+                  onClick={() => !requestStatus && setIsRequestModalOpen(true)}
+                  disabled={!!requestStatus}
+                  className={`px-8 py-3 font-bold rounded-xl shadow-xl transition-all transform ${
+                    requestStatus === 'pending' ? 'bg-yellow-500 text-white cursor-default' :
+                    requestStatus === 'accepted' ? 'bg-green-600 text-white cursor-default' :
+                    requestStatus === 'rejected' ? 'bg-red-500 text-white cursor-default' :
+                    'bg-white text-[#007749] hover:bg-gray-50 hover:-translate-y-1'
+                  }`}
+                >
+                  {requestStatus === 'pending' ? 'Request Pending' :
+                   requestStatus === 'accepted' ? 'Mentorship Accepted' :
+                   requestStatus === 'rejected' ? 'Request Rejected' :
+                   'Mentorship Request'}
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -177,7 +211,7 @@ const ProfilMentor = () => {
                 Skills & Expertise
               </h2>
               <div className="flex flex-wrap gap-3">
-                {data?.skills.map((skill, index) => (
+                {data?.skills && data?.skills.map((skill, index) => (
                   <span 
                     key={index}
                     className="px-5 py-2 bg-[#F0F9F1] text-[#007749] border border-[#AAD4C1]/30 rounded-full text-sm font-bold hover:bg-[#AAD4C1]/20 transition-colors"
@@ -234,14 +268,65 @@ const ProfilMentor = () => {
                   <span className="text-3xl font-extrabold text-gray-900">{data?.price}$</span>
                   <span className="text-gray-500 ml-1">/month</span>
                 </div>
-                <button className="w-full mt-6 py-4 bg-[#007749] text-white font-bold rounded-2xl shadow-lg shadow-[#007749]/20 hover:bg-[#00663d] transition-all transform hover:scale-[1.02]">
-                  Enroll Now
-                </button>
+                {isAprenant && (
+                  <button 
+                    onClick={() => !requestStatus && setIsRequestModalOpen(true)}
+                    disabled={!!requestStatus}
+                    className={`w-full mt-6 py-4 font-bold rounded-2xl shadow-lg transition-all transform hover:scale-[1.02] ${
+                      requestStatus === 'pending' ? 'bg-yellow-500 text-white cursor-default' :
+                      requestStatus === 'accepted' ? 'bg-green-600 text-white cursor-default' :
+                      requestStatus === 'rejected' ? 'bg-red-500 text-white cursor-default' :
+                      'bg-[#007749] text-white hover:bg-[#00663d] shadow-[#007749]/20'
+                    }`}
+                  >
+                    {requestStatus === 'pending' ? 'Request Pending' :
+                     requestStatus === 'accepted' ? 'Mentorship Accepted' :
+                     requestStatus === 'rejected' ? 'Request Rejected' :
+                     'Enroll Now'}
+                  </button>
+                )}
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Mentorship Request Modal */}
+      {isRequestModalOpen && (
+        <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-3xl p-8 max-w-lg w-full shadow-2xl">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Send Mentorship Request</h2>
+            <p className="text-gray-600 mb-6">
+              Introduce yourself to {data?.firstName} and explain why you're seeking mentorship.
+            </p>
+            
+            <textarea
+              value={requestMessage}
+              onChange={(e) => setRequestMessage(e.target.value)}
+              placeholder="Tell the mentor about your goals and what you hope to achieve..."
+              className="w-full h-40 p-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-[#AAD4C1] focus:border-transparent outline-none resize-none mb-6"
+            />
+            
+            <div className="flex gap-4">
+              <button
+                onClick={() => setIsRequestModalOpen(false)}
+                className="flex-1 py-3 bg-gray-100 text-gray-700 font-bold rounded-xl hover:bg-gray-200 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSendRequest}
+                disabled={isSendingRequest}
+                className="flex-1 py-3 bg-[#007749] text-white font-bold rounded-xl hover:bg-[#00663d] transition-colors shadow-lg shadow-[#007749]/20 flex items-center justify-center"
+              >
+                {isSendingRequest ? (
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                ) : "Send Request"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {isEditing && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto">

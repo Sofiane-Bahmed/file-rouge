@@ -16,7 +16,7 @@ export const viewAprenantProfile = async (req, res) => {
   const apprenantId = req.params.id;
 
   try {
-    const aprenant = await User.findById(apprenantId).populate('userRole');
+    const aprenant = await Aprenant.findById(apprenantId);
     if (!aprenant) {
       return res.status(404).json({ message: 'apprenant not found' });
     }
@@ -174,7 +174,8 @@ export const getAvailableMentors = async (req, res) => {
 
 
 export const requestMentoring = async (req, res) => {
-  const { aprenantId, mentorId, message } = req.body;
+  //removed temporily the message from the request body to test the mentorship request without it
+  const { aprenantId, mentorId } = req.body;
 
   try {
     const aprenant = await Aprenant.findById(aprenantId);
@@ -187,7 +188,6 @@ export const requestMentoring = async (req, res) => {
     const request = new MentorshipRequest({
       aprenant: aprenantId,
       mentor: mentorId,
-      message: message,
       status: "pending"
     });
 
