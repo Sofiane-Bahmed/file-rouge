@@ -1,5 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
+dotenv.config();
 import mongoose from "mongoose";
 import WebSocket from "ws";
 import cookieParser from "cookie-parser"
@@ -17,8 +18,8 @@ import { sessionRouter } from "./routers/sessionRouter.js"
 import { sessionFeedbackRouter } from "./routers/sessionFeedbackRouter.js"
 import { mentorshipRequestRouter } from "./routers/mentorshipRequestRouter.js"
 import { messageRouter } from "./routers/messageRouter.js";
+import { initSocket } from "./socket.js";
 
-dotenv.config();
 const port = process.env.PORT || 8082;
 const dbURI = process.env.DBURI;
 
@@ -28,9 +29,10 @@ mongoose.set("strictQuery", true);
 mongoose
   .connect(dbURI)
   .then((result) => {
-    app.listen(port, () => {
+    const server = app.listen(port, () => {
       console.log(`this app is running in port http://localhost:${port}`);
     });
+    initSocket(server);
   })
   .catch((err) => {
     console.log(err);

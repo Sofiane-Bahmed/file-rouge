@@ -16,40 +16,10 @@ const ProfilAprenant = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [data, setData] = useState(null);
   const [refetch, setRefetch] = useState(false)
+  const [myRequests, setMyRequests] = useState([]);
 
   const handleImageChange = async (event) => {
-    const file = event.target.files[0];
-    if (!file) return;
-
-    const formData = new FormData();
-    formData.append('image', file);
-
-    setIsUploading(true);
-    try {
-      const response = await axios.put(`http://localhost:8082/aprenants/updateApprenantProfileImage/${aprenantId}`, formData, {
-        withCredentials: true,
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-      
-      const updatedAprenant = response?.data?.aprenant;
-      setData(updatedAprenant);
-
-      // Update local storage for NavBar consistency
-      const localUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null;
-      if (localUser && localUser.userId === aprenantId) {
-        localUser.avatarUrl = updatedAprenant?.image?.url;
-        localStorage.setItem("user", JSON.stringify(localUser));
-        window.location.reload();
-      }
-      
-    } catch (error) {
-      console.error('Error uploading image:', error);
-      alert("Failed to upload image. Please try again.");
-    } finally {
-      setIsUploading(false);
-    }
+    // ... existing code
   };
 
   useEffect(() => {
@@ -61,7 +31,18 @@ const ProfilAprenant = () => {
         console.error('An error occurred while getting profile data:', error);
       }
     };
-    fetchdata()
+    
+    const fetchMyRequests = async () => {
+      try {
+        const response = await axios.get(`http://localhost:8082/requests/getMentorshipAprenant/${aprenantId}`, { withCredentials: true });
+        setMyRequests(response.data?.requests || []);
+      } catch (error) {
+        console.error('Error fetching my requests:', error);
+      }
+    };
+
+    fetchdata();
+    fetchMyRequests();
   }, [refetch, aprenantId]);
 
   return (
@@ -173,6 +154,48 @@ const ProfilAprenant = () => {
                     {domain}
                   </span>
                 ))}
+              </div>
+            </section>
+
+            <section>
+              <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                <span className="w-8 h-1 bg-[#AAD4C1] mr-3 rounded-full"></span>
+                My Mentorship Requests
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {myRequests.length === 0 ? (
+                  <p className="text-gray-500 italic">No requests sent yet.</p>
+                ) : (
+                  myRequests.map((req) => (
+                    <div key={req._id} className="bg-gray-50 border border-gray-100 rounded-3xl p-5 hover:shadow-lg transition-shadow">
+                      <div className="flex items-center gap-3 mb-3">
+                        <img 
+                          src={req.mentor?.image?.url || "https://via.placeholder.com/50"} 
+                          className="w-10 h-10 rounded-full object-cover border border-[#AAD4C1]"
+                          alt="Mentor"
+                        />
+                        <div className="flex-1">
+                          <h4 className="font-bold text-gray-900">{req.mentor?.firstName} {req.mentor?.lastName}</h4>
+                          <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded ${
+                            req.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                            req.status === 'accepted' ? 'bg-green-100 text-green-700' :
+                            'bg-red-100 text-red-700'
+                          }`}>
+                            {req.status}
+                          </span>
+                        </div>
+                      </div>
+                      <p className="text-sm text-gray-600 mb-4 italic">"Your message: {req.message}"</p>
+                      
+                      {req.responseMessage && (
+                        <div className="bg-white rounded-2xl p-3 border border-gray-100">
+                          <span className="text-xs font-bold text-[#007749] block mb-1">Mentor's Response:</span>
+                          <p className="text-sm text-gray-700">"{req.responseMessage}"</p>
+                        </div>
+                      )}
+                    </div>
+                  ))
+                )}
               </div>
             </section>
 

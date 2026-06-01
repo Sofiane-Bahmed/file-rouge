@@ -6,6 +6,7 @@ import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useSocket } from '../../context/SocketContext';
 
 
 import logo from "../../assets/logo.png"
@@ -24,7 +25,14 @@ function classNames(...classes) {
 const NavBar = () => {
 
   const [user, setUser] = useState(localStorage.user ? JSON.parse(localStorage.user) : null);
+  const { notifications, clearNotifications } = useSocket();
   const navigate = useNavigate()
+
+  useEffect(() => {
+    if (notifications.length > 0) {
+      console.log("NavBar received new notifications:", notifications);
+    }
+  }, [notifications]);
   const loggedIn = !!user;
 
   const profileURL =
@@ -45,9 +53,7 @@ const NavBar = () => {
       console.error(error);
     }
   };
-
-
-
+  
   return (
     <Disclosure as="nav" className="bg-[#F9FFF5] shadow-xl z-10 ">
       {({ open }) => (
@@ -103,13 +109,51 @@ const NavBar = () => {
               <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
                 {user ? (
                   <>
-                    <button
-                      type="button"
-                      className=" p-1  hover:text-[#007749]  focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-                    >
-                      <span className="sr-only">View notifications</span>
-                      <BellIcon className="h-6 w-6" aria-hidden="true" />
-                    </button>
+                    <Menu as="div" className="relative ml-3">
+                      <div>
+                        <Menu.Button className="relative p-1 text-gray-400 hover:text-[#007749] focus:outline-none">
+                          <span className="sr-only">View notifications</span>
+                          <BellIcon className="h-6 w-6" aria-hidden="true" />
+                          {notifications.length > 0 && (
+                            <span className="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-white" />
+                          )}
+                        </Menu.Button>
+                      </div>
+                      <Transition
+                        as={Fragment}
+                        enter="transition ease-out duration-100"
+                        enterFrom="transform opacity-0 scale-95"
+                        enterTo="transform opacity-100 scale-100"
+                        leave="transition ease-in duration-75"
+                        leaveFrom="transform opacity-100 scale-100"
+                        leaveTo="transform opacity-0 scale-95"
+                      >
+                        <Menu.Items className="absolute right-0 z-10 mt-2 w-80 origin-top-right rounded-xl bg-white py-2 shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none">
+                          <div className="px-4 py-2 border-b border-gray-100 flex justify-between items-center">
+                            <span className="font-bold text-gray-900">Notifications</span>
+                            {notifications.length > 0 && (
+                              <button onClick={clearNotifications} className="text-xs text-[#007749] hover:underline">Clear all</button>
+                            )}
+                          </div>
+                          <div className="max-h-96 overflow-y-auto">
+                            {notifications.length === 0 ? (
+                              <div className="px-4 py-6 text-center text-gray-500 text-sm">No new notifications</div>
+                            ) : (
+                              notifications.map((notif, idx) => (
+                                <Menu.Item key={idx}>
+                                  <div className="px-4 py-3 hover:bg-gray-50 border-b border-gray-50 last:border-0 transition-colors">
+                                    <p className="text-sm text-gray-800 font-medium">{notif.message}</p>
+                                    {notif.responseMessage && (
+                                      <p className="text-xs text-gray-500 mt-1 italic">"{notif.responseMessage}"</p>
+                                    )}
+                                  </div>
+                                </Menu.Item>
+                              ))
+                            )}
+                          </div>
+                        </Menu.Items>
+                      </Transition>
+                    </Menu>
 
                     {/* Profile dropdown */}
 

@@ -28,14 +28,17 @@ import TestimonialCardSlider from './compnents/testimonialCard/TestimonialCardSl
 import Form from "./compnents/Form"
 import SelectButton from '../src/compnents/filtreButtons'
 
+import { SocketProvider } from './context/SocketContext'
+
 function App() {
 
   let mentorId = useParams()
 
   const [loginUser, setLoginUser] = useState(false)
+  const localUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null;
 
   return (
-    <>
+    <SocketProvider userId={localUser?.userId}>
       <div className="flex flex-col min-h-screen">
 
         <Routes>
@@ -98,8 +101,8 @@ function App() {
 
         </Routes >
       </div>
+    </SocketProvider>
 
-    </>
   )
 }
 

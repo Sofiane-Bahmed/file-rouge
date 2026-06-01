@@ -19,9 +19,15 @@ const ProfilMentor = () => {
   const [requestMessage, setRequestMessage] = useState("");
   const [requestStatus, setRequestStatus] = useState(null); // 'pending', 'accepted', 'rejected' or null
   const [isSendingRequest, setIsSendingRequest] = useState(false);
+  const [receivedRequests, setReceivedRequests] = useState([]);
+  const [isResponseModalOpen, setIsResponseModalOpen] = useState(false);
+  const [selectedRequestId, setSelectedRequestId] = useState(null);
+  const [responseMsg, setResponseMsg] = useState("");
+  const [actionType, setActionType] = useState(""); // 'accept' or 'reject'
 
   const localUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null;
   const isAprenant = localUser?.userRole === "aprenant";
+  const isOwnProfile = localUser?.userId === mentorId;
 
   const handleImageChange = async (event) => {
     // ... existing code
@@ -41,8 +47,8 @@ const ProfilMentor = () => {
       if (isAprenant && localUser?.userId) {
         try {
           const response = await axios.get(`http://localhost:8082/requests/getMentorshipAprenant/${localUser.userId}`, { withCredentials: true });
-          const requests = response.data?.requests?.mentorshipsRequests || [];
-          const currentMentorRequest = requests.find(req => req.mentor === mentorId);
+          const requests = response.data?.requests || [];
+          const currentMentorRequest = requests.find(req => req.mentor?._id === mentorId);
           if (currentMentorRequest) {
             setRequestStatus(currentMentorRequest.status);
           }
@@ -52,9 +58,21 @@ const ProfilMentor = () => {
       }
     };
 
+    const fetchReceivedRequests = async () => {
+      if (isOwnProfile) {
+        try {
+          const response = await axios.get(`http://localhost:8082/requests/getMentorship/${mentorId}`, { withCredentials: true });
+          setReceivedRequests(response.data?.requests || []);
+        } catch (error) {
+          console.error('Error fetching received requests:', error);
+        }
+      }
+    };
+
     fetchdata();
     fetchRequestStatus();
-  }, [refetch, mentorId, isAprenant, localUser?.userId]);
+    fetchReceivedRequests();
+  }, [refetch, mentorId, isAprenant, localUser?.userId, isOwnProfile]);
 
   const handleSendRequest = async () => {
     if (!requestMessage.trim()) {
@@ -78,6 +96,32 @@ const ProfilMentor = () => {
       alert(error.response?.data?.message || "Failed to send mentorship request.");
     } finally {
       setIsSendingRequest(false);
+    }
+  };
+
+  const handleAction = async () => {
+    if (!responseMsg.trim()) {
+      alert("Please enter a response message.");
+      return;
+    }
+
+    try {
+      const endpoint = actionType === 'accept' ? 'acceptMentorship' : 'rejectMentorship';
+      const method = actionType === 'accept' ? 'post' : 'put';
+      
+      await axios[method](`http://localhost:8082/requests/${endpoint}`, {
+        requestId: selectedRequestId,
+        mentorId: mentorId,
+        responseMessage: responseMsg
+      }, { withCredentials: true });
+      
+      alert(`Request ${actionType}ed successfully!`);
+      setIsResponseModalOpen(false);
+      setRefetch(!refetch);
+      setResponseMsg("");
+    } catch (error) {
+      console.error(`Error ${actionType}ing request:`, error);
+      alert("Action failed. Please try again.");
     }
   };
 
@@ -322,6 +366,108 @@ const ProfilMentor = () => {
                 {isSendingRequest ? (
                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                 ) : "Send Request"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isOwnProfile && receivedRequests.length > 0 && (
+        <div className="max-w-screen-xl mx-auto px-4 py-16 border-t border-gray-100">
+          <h2 className="text-3xl font-bold text-gray-900 mb-8 flex items-center">
+            <span className="w-12 h-1.5 bg-[#007749] mr-4 rounded-full"></span>
+            Mentorship Requests Received
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {receivedRequests.map((req) => (
+              <div key={req._id} className="bg-white border border-gray-100 rounded-3xl p-6 shadow-xl shadow-gray-100/50 hover:shadow-2xl transition-shadow">
+                <div className="flex items-center gap-4 mb-4">
+                  <img 
+                    src={req.aprenant?.image?.url || "https://via.placeholder.com/100"} 
+                    className="w-14 h-14 rounded-full object-cover border-2 border-[#AAD4C1]"
+                    alt="Learner"
+                  />
+                  <div>
+                    <h4 className="font-bold text-lg text-gray-900">{req.aprenant?.firstName} {req.aprenant?.lastName}</h4>
+                    <span className={`text-xs font-bold uppercase tracking-widest px-2 py-1 rounded-md ${
+                      req.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                      req.status === 'accepted' ? 'bg-green-100 text-green-700' :
+                      'bg-red-100 text-red-700'
+                    }`}>
+                      {req.status}
+                    </span>
+                  </div>
+                </div>
+                <p className="text-gray-600 mb-6 line-clamp-3">"{req.message}"</p>
+                
+                {req.status === 'pending' && (
+                  <div className="flex gap-3">
+                    <button 
+                      onClick={() => {
+                        setSelectedRequestId(req._id);
+                        setActionType('accept');
+                        setIsResponseModalOpen(true);
+                      }}
+                      className="flex-1 py-2 bg-[#007749] text-white text-sm font-bold rounded-xl hover:bg-[#00663d] transition-colors"
+                    >
+                      Accept
+                    </button>
+                    <button 
+                      onClick={() => {
+                        setSelectedRequestId(req._id);
+                        setActionType('reject');
+                        setIsResponseModalOpen(true);
+                      }}
+                      className="flex-1 py-2 bg-white text-red-500 border border-red-500 text-sm font-bold rounded-xl hover:bg-red-50 transition-colors"
+                    >
+                      Reject
+                    </button>
+                  </div>
+                )}
+                {req.responseMessage && (
+                  <div className="mt-4 pt-4 border-t border-gray-50 text-sm">
+                    <span className="font-bold text-gray-900 block mb-1">Your Response:</span>
+                    <p className="text-gray-500 italic">"{req.responseMessage}"</p>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Response Modal */}
+      {isResponseModalOpen && (
+        <div className="fixed inset-0 z-[120] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-3xl p-8 max-w-lg w-full shadow-2xl">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4 capitalize">
+              {actionType} Mentorship Request
+            </h2>
+            <p className="text-gray-600 mb-6">
+              Write a brief message to the learner explaining your decision.
+            </p>
+            
+            <textarea
+              value={responseMsg}
+              onChange={(e) => setResponseMsg(e.target.value)}
+              placeholder="Your message to the learner..."
+              className="w-full h-40 p-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-[#AAD4C1] focus:border-transparent outline-none resize-none mb-6"
+            />
+            
+            <div className="flex gap-4">
+              <button
+                onClick={() => setIsResponseModalOpen(false)}
+                className="flex-1 py-3 bg-gray-100 text-gray-700 font-bold rounded-xl hover:bg-gray-200 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleAction}
+                className={`flex-1 py-3 text-white font-bold rounded-xl transition-colors shadow-lg ${
+                  actionType === 'accept' ? 'bg-[#007749] hover:bg-[#00663d] shadow-[#007749]/20' : 'bg-red-500 hover:bg-red-600 shadow-red-500/20'
+                }`}
+              >
+                Confirm {actionType}
               </button>
             </div>
           </div>

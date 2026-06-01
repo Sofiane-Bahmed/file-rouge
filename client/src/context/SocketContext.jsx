@@ -1,0 +1,49 @@
+import React, { createContext, useContext, useEffect, useState } from 'react';
+
+const SocketContext = createContext();
+
+export const useSocket = () => useContext(SocketContext);
+
+export const SocketProvider = ({ children, userId }) => {
+  const [socket, setSocket] = useState(null);
+  const [notifications, setNotifications] = useState([]);
+
+  useEffect(() => {
+    if (!userId) return;
+
+    const ws = new WebSocket('ws://localhost:8082');
+
+    ws.onopen = () => {
+      console.log('Connected to WebSocket');
+      ws.send(JSON.stringify({ type: 'auth', userId }));
+    };
+
+    ws.onmessage = (event) => {
+      try {
+        const notification = JSON.parse(event.data);
+        console.log('Received WebSocket notification:', notification);
+        setNotifications((prev) => [notification, ...prev]);
+      } catch (e) {
+        console.error('Error parsing WebSocket message:', e);
+      }
+    };
+
+    ws.onclose = () => {
+      console.log('Disconnected from WebSocket');
+    };
+
+    setSocket(ws);
+
+    return () => {
+      ws.close();
+    };
+  }, [userId]);
+
+  const clearNotifications = () => setNotifications([]);
+
+  return (
+    <SocketContext.Provider value={{ socket, notifications, clearNotifications }}>
+      {children}
+    </SocketContext.Provider>
+  );
+};

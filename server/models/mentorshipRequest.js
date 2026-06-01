@@ -23,6 +23,9 @@ const mentorshipRequestSchema = new Schema(
       enum: ["pending", "accepted", "rejected"],
       default: "pending",
     },
+    responseMessage: {
+      type: String,
+    },
   },
   { timestamps: true }
 );
