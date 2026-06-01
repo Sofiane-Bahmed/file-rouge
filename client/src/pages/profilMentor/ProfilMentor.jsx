@@ -1,6 +1,6 @@
 import Table from "../../compnents/Table"
 import React, { useEffect, useState, useRef } from 'react'
-import { MdEdit, MdPhotoCamera } from 'react-icons/md';
+import { MdChat, MdEdit, MdPhotoCamera } from 'react-icons/md';
 import Form from "../../compnents/Form";
 import axios from 'axios'
 import { useParams, Link } from "react-router-dom";
@@ -211,23 +211,35 @@ const ProfilMentor = () => {
               </div>
             </div>
             
-            <div className="mb-2">
+            <div className="mb-2 flex gap-4">
               {isAprenant && (
-                <button 
-                  onClick={() => !requestStatus && setIsRequestModalOpen(true)}
-                  disabled={!!requestStatus}
-                  className={`px-8 py-3 font-bold rounded-xl shadow-xl transition-all transform ${
-                    requestStatus === 'pending' ? 'bg-yellow-500 text-white cursor-default' :
-                    requestStatus === 'accepted' ? 'bg-green-600 text-white cursor-default' :
-                    requestStatus === 'rejected' ? 'bg-red-500 text-white cursor-default' :
-                    'bg-white text-[#007749] hover:bg-gray-50 hover:-translate-y-1'
-                  }`}
-                >
-                  {requestStatus === 'pending' ? 'Request Pending' :
-                   requestStatus === 'accepted' ? 'Mentorship Accepted' :
-                   requestStatus === 'rejected' ? 'Request Rejected' :
-                   'Mentorship Request'}
-                </button>
+                <>
+                  <button 
+                    onClick={() => !requestStatus && setIsRequestModalOpen(true)}
+                    disabled={!!requestStatus}
+                    className={`px-8 py-3 font-bold rounded-xl shadow-xl transition-all transform ${
+                      requestStatus === 'pending' ? 'bg-yellow-500 text-white cursor-default' :
+                      requestStatus === 'accepted' ? 'bg-green-600 text-white cursor-default' :
+                      requestStatus === 'rejected' ? 'bg-red-500 text-white cursor-default' :
+                      'bg-white text-[#007749] hover:bg-gray-50 hover:-translate-y-1'
+                    }`}
+                  >
+                    {requestStatus === 'pending' ? 'Request Pending' :
+                     requestStatus === 'accepted' ? 'Mentorship Accepted' :
+                     requestStatus === 'rejected' ? 'Request Rejected' :
+                     'Mentorship Request'}
+                  </button>
+                  
+                  {requestStatus === 'accepted' && (
+                    <Link 
+                      to="/messages"
+                      className="px-8 py-3 bg-[#007749] text-white font-bold rounded-xl shadow-xl hover:bg-[#00663d] transition-all transform hover:-translate-y-1 flex items-center gap-2"
+                    >
+                      <MdChat className="text-xl" />
+                      Message
+                    </Link>
+                  )}
+                </>
               )}
             </div>
           </div>

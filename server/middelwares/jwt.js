@@ -87,4 +87,20 @@ export const adminAutorisation = (req, res, next) => {
     }
   
   };
+
+  export const generalAutorisation = (req, res, next) => {
+    const authToken = req.cookies["auth-token"]?.authToken;
+   
+    if (!authToken) {
+      return res.status(401).json({ message: "You must be authenticated to access this route." });
+    }
+ 
+    try {
+      const decodedToken = verify(authToken, jwtSecret);
+      res.locals.userId = decodedToken._id;
+      next();
+    } catch (error) {
+      return res.status(401).json({ message: "Invalid token" });
+    }
+  };
   

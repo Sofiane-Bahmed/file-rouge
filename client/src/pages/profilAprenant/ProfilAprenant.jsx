@@ -17,6 +17,10 @@ const ProfilAprenant = () => {
   const [data, setData] = useState(null);
   const [refetch, setRefetch] = useState(false)
   const [myRequests, setMyRequests] = useState([]);
+  const [mentorshipStatus, setMentorshipStatus] = useState(null);
+
+  const localUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null;
+  const isMentor = localUser?.userRole === "mentor";
 
   const handleImageChange = async (event) => {
     // ... existing code
@@ -32,18 +36,24 @@ const ProfilAprenant = () => {
       }
     };
     
-    const fetchMyRequests = async () => {
-      try {
-        const response = await axios.get(`http://localhost:8082/requests/getMentorshipAprenant/${aprenantId}`, { withCredentials: true });
-        setMyRequests(response.data?.requests || []);
-      } catch (error) {
-        console.error('Error fetching my requests:', error);
+    const fetchMentorshipStatus = async () => {
+      if (isMentor && localUser?.userId) {
+        try {
+          const response = await axios.get(`http://localhost:8082/requests/getMentorship/${localUser.userId}`, { withCredentials: true });
+          const requests = response.data?.requests || [];
+          const currentAprenantRequest = requests.find(req => req.aprenant?._id === aprenantId);
+          if (currentAprenantRequest) {
+            setMentorshipStatus(currentAprenantRequest.status);
+          }
+        } catch (error) {
+          console.error('Error fetching mentorship status:', error);
+        }
       }
     };
 
     fetchdata();
-    fetchMyRequests();
-  }, [refetch, aprenantId]);
+    fetchMentorshipStatus();
+  }, [refetch, aprenantId, isMentor, localUser?.userId]);
 
   return (
     <div className="min-h-screen bg-white">
@@ -103,13 +113,24 @@ const ProfilAprenant = () => {
                 <h1 className="text-4xl font-extrabold text-white">
                   {data?.firstName} {data?.lastName}
                 </h1>
-                <button 
-                  onClick={() => setIsEditing(true)}
-                  className="p-2 bg-white/20 hover:bg-white/30 rounded-full text-white transition-colors"
-                  title="Edit Profile"
-                >
-                  <MdEdit className="text-xl" />
-                </button>
+                {localUser?.userId === aprenantId && (
+                  <button 
+                    onClick={() => setIsEditing(true)}
+                    className="p-2 bg-white/20 hover:bg-white/30 rounded-full text-white transition-colors"
+                    title="Edit Profile"
+                  >
+                    <MdEdit className="text-xl" />
+                  </button>
+                )}
+                {isMentor && mentorshipStatus === 'accepted' && (
+                  <Link 
+                    to="/messages"
+                    className="px-6 py-2 bg-[#007749] text-white font-bold rounded-xl shadow-xl hover:bg-[#00663d] transition-all transform hover:-translate-y-1 flex items-center gap-2 text-sm"
+                  >
+                    <MdChat className="text-lg" />
+                    Message Learner
+                  </Link>
+                )}
               </div>
               
               <div className="flex flex-wrap items-center justify-center md:justify-start gap-3">

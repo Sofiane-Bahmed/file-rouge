@@ -7,6 +7,7 @@ export const useSocket = () => useContext(SocketContext);
 export const SocketProvider = ({ children, userId }) => {
   const [socket, setSocket] = useState(null);
   const [notifications, setNotifications] = useState([]);
+  const [onMessageReceived, setOnMessageReceived] = useState(null);
 
   useEffect(() => {
     if (!userId) return;
@@ -22,6 +23,13 @@ export const SocketProvider = ({ children, userId }) => {
       try {
         const notification = JSON.parse(event.data);
         console.log('Received WebSocket notification:', notification);
+        
+        if (notification.type === 'NEW_MESSAGE') {
+          if (onMessageReceived) {
+            onMessageReceived(notification.data);
+          }
+        }
+        
         setNotifications((prev) => [notification, ...prev]);
       } catch (e) {
         console.error('Error parsing WebSocket message:', e);
@@ -37,12 +45,12 @@ export const SocketProvider = ({ children, userId }) => {
     return () => {
       ws.close();
     };
-  }, [userId]);
+  }, [userId, onMessageReceived]);
 
   const clearNotifications = () => setNotifications([]);
 
   return (
-    <SocketContext.Provider value={{ socket, notifications, clearNotifications }}>
+    <SocketContext.Provider value={{ socket, notifications, clearNotifications, setOnMessageReceived }}>
       {children}
     </SocketContext.Provider>
   );

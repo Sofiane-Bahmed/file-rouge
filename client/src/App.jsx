@@ -84,7 +84,6 @@ function App() {
 
           <Route path="/messages" element={
             <>
-              <NavBar />
               <Messages />
             </>
           } />
@@ -98,7 +97,6 @@ function App() {
           } />
           <Route path="/profilMentor/:mentorId" element={
             <>
-
               <ProfilMentor />
             </>
           } />

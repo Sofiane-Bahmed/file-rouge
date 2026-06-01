@@ -2,24 +2,29 @@ import mongoose from "mongoose"
 
 const Schema = mongoose.Schema
 
-const messageSchema = new Schema (
-   {
-    sender : {
-        type: String,
-        enum: ['mentor', 'apprenant'],
-        required: true
+const messageSchema = new Schema(
+  {
+    sender: {
+      type: Schema.Types.ObjectId,
+      ref: "user",
+      required: true,
     },
-    reciver : {
-        type:String,
-        enum: ['mentor', 'apprenant'],
-        required: true
+    receiver: {
+      type: Schema.Types.ObjectId,
+      ref: "user",
+      required: true,
     },
-    message:{
-        type: String,
-        required : true
-    }, 
-   },
-   {timestamps : true} 
-)
+    message: {
+      type: String,
+      required: true,
+    },
+    // Useful for grouping messages between two people
+    conversationId: {
+      type: String,
+      required: true,
+    }
+  },
+  { timestamps: true }
+);
 
 export const Message = mongoose.model("message",messageSchema)

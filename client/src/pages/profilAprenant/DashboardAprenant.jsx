@@ -5,7 +5,7 @@ import NavBar from "../../compnents/navbar/NavBar";
 import Footer from "../../compnents/footer/Footer";
 import ProgressComponent from "../../compnents/Progress";
 import Table from "../../compnents/Table";
-import { MdDashboard, MdAssignment, MdTimeline } from 'react-icons/md';
+import { MdDashboard, MdAssignment, MdTimeline, MdChat, MdPersonSearch } from 'react-icons/md';
 import DashboardSkeleton from './DashboardSkeleton';
 
 const DashboardAprenant = () => {
@@ -127,6 +127,25 @@ const DashboardAprenant = () => {
                           <p className="italic">"{req.responseMessage}"</p>
                         </div>
                       )}
+
+                      <div className="mt-4 flex gap-2">
+                        <Link 
+                          to={`/profilMentor/${req.mentor?._id}`}
+                          className="flex-1 flex items-center justify-center gap-1 py-2 bg-white text-gray-700 text-[10px] font-bold rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
+                        >
+                          <MdPersonSearch className="text-sm" />
+                          View Profile
+                        </Link>
+                        {req.status === 'accepted' && (
+                          <Link 
+                            to="/messages"
+                            className="flex-1 flex items-center justify-center gap-1 py-2 bg-[#007749] text-white text-[10px] font-bold rounded-lg hover:bg-[#00663d] transition-colors shadow-sm"
+                          >
+                            <MdChat className="text-sm" />
+                            Message
+                          </Link>
+                        )}
+                      </div>
                     </div>
                   ))
                 )}
