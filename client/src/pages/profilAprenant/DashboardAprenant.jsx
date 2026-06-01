@@ -6,6 +6,7 @@ import Footer from "../../compnents/footer/Footer";
 import ProgressComponent from "../../compnents/Progress";
 import Table from "../../compnents/Table";
 import { MdDashboard, MdAssignment, MdTimeline } from 'react-icons/md';
+import DashboardSkeleton from './DashboardSkeleton';
 
 const DashboardAprenant = () => {
   const { aprenantId } = useParams();
@@ -36,9 +37,11 @@ const DashboardAprenant = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="w-12 h-12 border-4 border-[#007749] border-t-transparent rounded-full animate-spin"></div>
-      </div>
+      <>
+        <NavBar />
+        <DashboardSkeleton />
+        <Footer />
+      </>
     );
   }
 
