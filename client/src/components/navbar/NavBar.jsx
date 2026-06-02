@@ -1,39 +1,30 @@
-import axios from "axios"
-import jwt_decode from 'jwt-decode';
-
-import { Fragment } from 'react'
-import { Disclosure, Menu, Transition } from '@headlessui/react'
-import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
-import { useEffect, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import React, { Fragment, useEffect } from 'react';
+import { Disclosure, Menu, Transition } from '@headlessui/react';
+import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { Link } from 'react-router-dom';
 import { useSocket } from '../../context/SocketContext';
+import { useAuth } from '../../hooks/useAuth';
 
-
-import logo from "../../assets/logo.png"
-
-
+import logo from "../../assets/logo.png";
 
 const navigation = [
   { name: 'HOME', href: '/' },
-  { name: 'FIND MENTORS', href: '/mentors', },
-]
+  { name: 'FIND MENTORS', href: '/mentors' },
+];
 
 function classNames(...classes) {
-  return classes.filter(Boolean).join(' ')
+  return classes.filter(Boolean).join(' ');
 }
 
 const NavBar = () => {
-
-  const [user, setUser] = useState(localStorage.user ? JSON.parse(localStorage.user) : null);
+  const { user, logout, loggedIn } = useAuth();
   const { notifications, clearNotifications } = useSocket();
-  const navigate = useNavigate()
 
   useEffect(() => {
     if (notifications.length > 0) {
       console.log("NavBar received new notifications:", notifications);
     }
   }, [notifications]);
-  const loggedIn = !!user;
 
   const profileURL =
     user?.userRole === 'mentor'
@@ -42,18 +33,9 @@ const NavBar = () => {
 
   const dashboardURL = `/dashboardAprenant/${user?.userId}`;
 
-
-  const handleLogout = async () => {
-    try {
-      await axios.get('http://localhost:8082/users/logout', { withCredentials: true });
-      // Clear any local storage or state variables related to user authentication
-      setUser(null);
-      localStorage.removeItem("user")
-      navigate('/logIn');
-
-    } catch (error) {
-      console.error(error);
-    }
+  const handleLogout = (e) => {
+    e.preventDefault();
+    logout();
   };
   
   return (

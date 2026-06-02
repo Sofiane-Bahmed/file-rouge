@@ -1,13 +1,9 @@
 
-import AboutContainer from "../compnents/about/AboutContainer"
-
-
+import AboutContainer from "../components/about/AboutContainer"
 
 function About() {
   return (
-
-        <AboutContainer/>
-    
+    <AboutContainer />
   )
 }
 

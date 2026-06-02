@@ -1,102 +1,26 @@
-import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import axios from 'axios';
+import React, { useState } from 'react';
+import { useMentors } from '../../hooks/useMentors';
 
-import NavBar from '../../compnents/navbar/NavBar';
-import Footer from '../../compnents/footer/Footer';
-import Search from '../../compnents/search/Search';
-import FiltreButtons from '../../compnents/filtreButtons';
-import Pagination from '../../compnents/Pagination';
-import MentorCard from '../../compnents/mentorCard/MentorCard';
-import MentorSkeleton from '../../compnents/mentorCard/MentorSkeleton';
-
+import NavBar from '../../components/navbar/NavBar';
+import Footer from '../../components/footer/Footer';
+import Search from '../../components/search/Search';
+import FiltreButtons from '../../components/filtreButtons';
+import Pagination from '../../components/Pagination';
+import MentorCard from '../../components/mentorCard/MentorCard';
+import MentorSkeleton from '../../components/mentorCard/MentorSkeleton';
 
 const Mentors = () => {
-
-  const [data, setData] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [filteredMentors, setFilteredMentors] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
-  
- 
-
-  const mentorsPerPage = 5;
-
-
-  useEffect(() => {
-
-    const fetchData = async () => {
-      setIsLoading(true);
-      setError(null);
-      try {
-        const response = await axios.get('http://localhost:8082/aprenants/getAvailableMentors', {
-          withCredentials: true,
-        });
-        setData(response.data);
-      } catch (error) {
-        console.error('An error occurred while fetching mentors:', error);
-        if (!error.response) {
-          setError('Network error: Please check your internet connection or if the server is running.');
-        } else {
-          setError('Failed to load mentors. Please try again later.');
-        }
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-
-  useEffect(() => {
-
-    if (searchQuery) {
-      const filtered = filterMentors(data);
-      setFilteredMentors(filtered);
-      setCurrentPage(1); // Reset the current page when search query changes
-    } else {
-      setFilteredMentors([]);
-    }
-  }, [searchQuery, data]);
-
-
-
-  const filterMentors = (mentors) => {
-
-    const query = searchQuery.toLowerCase();
-
-    if (mentors && mentors.length > 0) {
-      return mentors.filter((mentor) => {
-        const firstName = mentor.firstName ? mentor.firstName.toLowerCase() : '';
-        const lastName = mentor.lastName ? mentor.lastName.toLowerCase() : '';
-        const fullName = `${firstName} ${lastName}`.trim();
-        const company = mentor.company ? mentor.company.toLowerCase() : '';
-        const domains = mentor.domain ? mentor.domain.map((domain) => domain.toLowerCase()) : [];
-        const skills = mentor.skills ? mentor.skills.map((skill) => skill.toLowerCase()) : [];
-
-        return (
-          firstName.includes(query) ||
-          lastName.includes(query) ||
-          fullName.includes(query) ||
-          company.includes(query) ||
-          domains.some((domain) => domain.includes(query)) ||
-          skills.some((skill) => skill.includes(query))
-        );
-      });
-    } else {
-      return [];
-    }
-  };
-
- 
-
-  
-  const startIndex = (currentPage - 1) * mentorsPerPage;
-  const endIndex = startIndex + mentorsPerPage;
-  const displayedMentors = searchQuery ? filteredMentors.slice(startIndex, endIndex) : data.slice(startIndex, endIndex);
+  const {
+    setData,
+    displayedMentors,
+    currentPage,
+    setCurrentPage,
+    totalPages,
+    isLoading,
+    error,
+    data
+  } = useMentors(searchQuery);
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -168,7 +92,7 @@ const Mentors = () => {
         <div className="mt-12">
           <Pagination
             currentPage={currentPage}
-            totalPages={Math.ceil((searchQuery ? filteredMentors.length : data.length) / mentorsPerPage)}
+            totalPages={totalPages}
             onPageChange={handlePageChange}
           />
         </div>

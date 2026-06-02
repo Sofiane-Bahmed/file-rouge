@@ -1,39 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React from 'react';
 import { useParams, Link } from "react-router-dom";
-import NavBar from "../../compnents/navbar/NavBar";
-import Footer from "../../compnents/footer/Footer";
-import ProgressComponent from "../../compnents/Progress";
-import Table from "../../compnents/Table";
+import { useDashboardData } from '../../hooks/useDashboardData';
+
+import NavBar from "../../components/navbar/NavBar";
+import Footer from "../../components/footer/Footer";
+import ProgressComponent from "../../components/Progress";
+import Table from "../../components/Table";
 import { MdDashboard, MdAssignment, MdTimeline, MdChat, MdPersonSearch } from 'react-icons/md';
 import DashboardSkeleton from './DashboardSkeleton';
 
 const DashboardAprenant = () => {
   const { aprenantId } = useParams();
-  const [data, setData] = useState(null);
-  const [myRequests, setMyRequests] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const [profileRes, requestsRes] = await Promise.all([
-          axios.get(`http://localhost:8082/aprenants/viewAprenantProfile/${aprenantId}`, { withCredentials: true }),
-          axios.get(`http://localhost:8082/requests/getMentorshipAprenant/${aprenantId}`, { withCredentials: true })
-        ]);
-        
-        setData(profileRes.data.aprenant);
-        setMyRequests(requestsRes.data?.requests || []);
-      } catch (error) {
-        console.error('Error fetching dashboard data:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [aprenantId]);
+  const { data, myRequests, loading } = useDashboardData(aprenantId);
 
   if (loading) {
     return (
