@@ -6,13 +6,14 @@ import {viewAprenantProfile,updateApprenantProfile,aprenantSessionHistory,
      from "../controllers/aprenantController.js"
      
 import {aprenantAutorisation, generalAutorisation} from "../middelwares/jwt.js"
+import { upload } from "../middelwares/multer.js"
 
 export const aprenantRouter = Express.Router()
 
 
 aprenantRouter.get("/viewAprenantProfile/:id", generalAutorisation, viewAprenantProfile)
 aprenantRouter.put("/updateApprenantProfile/:id",aprenantAutorisation,updateApprenantProfile)
-aprenantRouter.put("/updateApprenantProfileImage/:id",aprenantAutorisation,updateAprenantImage)
+aprenantRouter.put("/updateApprenantProfileImage/:id",aprenantAutorisation, upload.single("image"), updateAprenantImage)
 aprenantRouter.get("/aprenantSessionHistory/:id",aprenantAutorisation,aprenantSessionHistory)
 aprenantRouter.get("/getAvailableMentors",getAvailableMentors)
 aprenantRouter.post("/requestMentoring",aprenantAutorisation,requestMentoring)

@@ -1,50 +1,82 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { useMessages } from '../../hooks/useMessages';
 import NavBar from '../../components/navbar/NavBar';
-import Footer from '../../components/footer/Footer';
 import ContactList from '../../components/messages/ContactList';
 import ChatWindow from '../../components/messages/ChatWindow';
+import { MdArrowBack } from 'react-icons/md';
 
 const Messages = () => {
   const { user: localUser } = useAuth();
   const {
-    contacts,
+    conversations,
     selectedContact,
     setSelectedContact,
     messages,
     loading,
-    sendMessage
+    sendMessage,
+    deleteMessage,
+    typingStatus,
+    handleTyping
   } = useMessages(localUser);
+
+  const [showChatMobile, setShowChatMobile] = useState(false);
+
+  // Handle contact selection
+  const handleSelectContact = (contact) => {
+    setSelectedContact(contact);
+    setShowChatMobile(true);
+  };
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="w-12 h-12 border-4 border-[#007749] border-t-transparent rounded-full animate-spin"></div>
+      <div className="flex flex-col h-screen bg-gray-50 overflow-hidden">
+        <NavBar />
+        <div className="flex-1 flex items-center justify-center">
+          <div className="w-12 h-12 border-4 border-[#007749] border-t-transparent rounded-full animate-spin"></div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="flex flex-col h-screen bg-gray-50 overflow-hidden">
       <NavBar />
       
-      <div className="flex-1 max-w-screen-xl mx-auto w-full p-4 md:p-8 flex gap-6 overflow-hidden h-[calc(100vh-140px)]">
-        <ContactList 
-          contacts={contacts} 
-          selectedContact={selectedContact} 
-          onSelectContact={setSelectedContact} 
-        />
+      <div className="flex-1 flex overflow-hidden">
+        <div className="w-full max-w-[1600px] mx-auto flex md:p-4 lg:p-6 gap-0 md:gap-4 lg:gap-6 overflow-hidden w-full h-full">
+          {/* Contact List - Hidden on mobile when chat is open */}
+          <div className={`w-full md:w-80 lg:w-96 flex flex-col h-full shrink-0 ${showChatMobile ? 'hidden md:flex' : 'flex'}`}>
+            <ContactList 
+              conversations={conversations} 
+              selectedContact={selectedContact} 
+              onSelectContact={handleSelectContact} 
+            />
+          </div>
 
-        <ChatWindow 
-          selectedContact={selectedContact} 
-          messages={messages} 
-          onSendMessage={sendMessage} 
-          currentUserId={localUser?.userId}
-        />
+          {/* Chat Window - Hidden on mobile when list is open */}
+          <div className={`flex-1 flex flex-col h-full min-w-0 ${!showChatMobile ? 'hidden md:flex' : 'flex'}`}>
+            {showChatMobile && (
+              <button 
+                onClick={() => setShowChatMobile(false)}
+                className="md:hidden flex items-center gap-2 p-4 text-[#007749] font-bold bg-white border-b sticky top-0 z-20"
+              >
+                <MdArrowBack size={24} />
+                Back to conversations
+              </button>
+            )}
+            <ChatWindow 
+              selectedContact={selectedContact} 
+              messages={messages} 
+              onSendMessage={sendMessage} 
+              onDeleteMessage={deleteMessage}
+              currentUserId={localUser?.userId}
+              typingStatus={typingStatus}
+              onTyping={handleTyping}
+            />
+          </div>
+        </div>
       </div>
-      
-      <Footer />
     </div>
   );
 };

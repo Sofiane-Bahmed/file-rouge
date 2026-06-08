@@ -1,4 +1,4 @@
-import cloudinary from "cloudinary";
+import { v2 as cloudinary } from 'cloudinary';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
@@ -80,9 +80,12 @@ export const updateAprenantImage = async (req, res) => {
     }
 
     //verify image url existence 
-
-    if (aprenant?.image?.url !== "") {
-      await cloudinary.uploader.destroy(aprenant?.image?.publicId)
+    if (aprenant?.image?.publicId) {
+      try {
+        await cloudinary.uploader.destroy(aprenant.image.publicId);
+      } catch (err) {
+        console.error("Cloudinary destroy error:", err);
+      }
     }
 
     // Upload image to Cloudinary

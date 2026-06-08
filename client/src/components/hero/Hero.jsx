@@ -19,8 +19,8 @@ const Hero = () => {
                         <div className='absolute -top-20 -left-20 blur-3xl h-[400px] w-[400px] bg-[#AAD4C1]/20 rounded-full -z-10'></div>
 
                         <h1 className="text-4xl text-gray-900 font-extrabold sm:text-5xl lg:text-6xl leading-tight">
-                            Get mentorship on <br /> 
-                            <span className='text-[#007749]'> 
+                            Get mentorship on <br />
+                            <span className='text-[#007749]'>
                                 <TypeAnimation sequence={[
                                     'web development',
                                     1000,
@@ -44,7 +44,7 @@ const Hero = () => {
                                     wrapper='span'
                                     repeat={Infinity}
                                 />
-                            </span>   
+                            </span>
                         </h1>
 
                         <p className="text-lg text-gray-600 max-w-lg">
@@ -58,10 +58,10 @@ const Hero = () => {
 
                     <div className='hidden md:block relative'>
                         <div className='absolute -bottom-10 -right-10 blur-2xl h-[300px] w-[300px] bg-[#57F2CC]/10 rounded-full'></div>
-                        <img 
-                            src={heroImage} 
+                        <img
+                            src={heroImage}
                             alt="Mentorship Hero"
-                            className="w-full h-auto object-contain transform hover:scale-105 transition-transform duration-500 drop-shadow-2xl" 
+                            className="w-full h-auto object-contain transform hover:scale-105 transition-transform duration-500 drop-shadow-2xl"
                         />
                     </div>
                 </div>

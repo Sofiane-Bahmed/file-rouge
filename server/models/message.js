@@ -22,6 +22,10 @@ const messageSchema = new Schema(
     conversationId: {
       type: String,
       required: true,
+    },
+    read: {
+      type: Boolean,
+      default: false
     }
   },
   { timestamps: true }

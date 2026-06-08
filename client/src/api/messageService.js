@@ -13,3 +13,11 @@ export const getMessages = (senderId, receiverId) => {
 export const sendMessage = (data) => {
   return apiClient.post('/message/sendMessage', data);
 };
+
+export const markAsRead = (userId, contactId) => {
+  return apiClient.post('/message/markAsRead', { userId, contactId });
+};
+
+export const deleteMessage = (messageId, userId) => {
+  return apiClient.delete('/message/deleteMessage', { data: { messageId, userId } });
+};

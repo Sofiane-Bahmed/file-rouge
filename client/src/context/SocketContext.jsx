@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
 
 const SocketContext = createContext();
 
@@ -7,7 +7,12 @@ export const useSocket = () => useContext(SocketContext);
 export const SocketProvider = ({ children, userId }) => {
   const [socket, setSocket] = useState(null);
   const [notifications, setNotifications] = useState([]);
-  const [onMessageReceived, setOnMessageReceived] = useState(null);
+  const onMessageReceivedRef = useRef(null);
+
+  // Function to set the callback without triggering effect re-run
+  const setOnMessageReceived = (callback) => {
+    onMessageReceivedRef.current = callback;
+  };
 
   useEffect(() => {
     if (!userId) return;
@@ -25,11 +30,12 @@ export const SocketProvider = ({ children, userId }) => {
         console.log('Received WebSocket notification:', notification);
         
         if (notification.type === 'NEW_MESSAGE') {
-          if (onMessageReceived) {
-            onMessageReceived(notification.data);
+          if (onMessageReceivedRef.current) {
+            onMessageReceivedRef.current(notification.data);
           }
         }
         
+        // Always add to notifications list
         setNotifications((prev) => [notification, ...prev]);
       } catch (e) {
         console.error('Error parsing WebSocket message:', e);
@@ -45,7 +51,7 @@ export const SocketProvider = ({ children, userId }) => {
     return () => {
       ws.close();
     };
-  }, [userId, onMessageReceived]);
+  }, [userId]); // Only depend on userId
 
   const clearNotifications = () => setNotifications([]);
 

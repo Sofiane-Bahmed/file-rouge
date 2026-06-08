@@ -35,7 +35,7 @@ const ProfilAprenant = () => {
 
     try {
       setIsUploading(true);
-      await updateAprenantImage(formData);
+      await updateAprenantImage(aprenantId, formData);
       refetch();
     } catch (error) {
       console.error('Error uploading image:', error);
@@ -77,6 +77,7 @@ const ProfilAprenant = () => {
         {isMentor && mentorshipStatus === 'accepted' && (
           <Link 
             to="/messages"
+            state={{ contact: data }}
             className="px-6 py-2 bg-[#007749] text-white font-bold rounded-xl shadow-xl hover:bg-[#00663d] transition-all transform hover:-translate-y-1 flex items-center gap-2 text-sm"
           >
             <MdChat className="text-lg" />

@@ -117,6 +117,7 @@ const DashboardAprenant = () => {
                         {req.status === 'accepted' && (
                           <Link 
                             to="/messages"
+                            state={{ contact: req.mentor }}
                             className="flex-1 flex items-center justify-center gap-1 py-2 bg-[#007749] text-white text-[10px] font-bold rounded-lg hover:bg-[#00663d] transition-colors shadow-sm"
                           >
                             <MdChat className="text-sm" />

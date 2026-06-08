@@ -1,35 +1,3 @@
-// import React, { useEffect, useState } from 'react';
-// import axios from 'axios';
-
-// const ProgressComponent = () => {
-//   const [progress, setProgress] = useState(0);
-
-//   useEffect(() => {
-//     // Fetch the apprentice's progress from the server
-//     const fetchProgress = async () => {
-//       try {
-//         const response = await axios.post('http://localhost:8082/mentors/aprenantProgress')
-//         setProgress(response.data.progress);
-//       } catch (error) {
-//         console.log('Error fetching progress:', error);
-//       }
-//     };
-
-//     fetchProgress();
-//   }, []);
-
-//   return (
-//     <div>
-//       <div className="progress-bar-container">
-//         <div className="progress-bar" style={{ width: `${progress}%` }}></div>
-//       </div>
-//       <p>{`${progress.toFixed(1)}%`} Complete</p>
-//     </div>
-//   );
-// };
-
-// export default ProgressComponent;
-
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Progress, ButtonGroup, Button, Row, Col } from 'rsuite';

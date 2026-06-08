@@ -4,9 +4,6 @@ import { useState, useEffect } from "react";
 const Pagination = ({ onPageChange, totalPages }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pages, setPages] = useState([]);
-;
-
-
 
   useEffect(() => {
     generatePages();

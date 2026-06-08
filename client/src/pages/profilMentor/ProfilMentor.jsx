@@ -43,7 +43,7 @@ const ProfilMentor = () => {
 
     try {
       setIsUploading(true);
-      await updateMentorImage(formData);
+      await updateMentorImage(mentorId, formData);
       refetch();
     } catch (error) {
       console.error('Error uploading image:', error);
@@ -155,6 +155,7 @@ const ProfilMentor = () => {
               {requestStatus === 'accepted' && (
                 <Link 
                   to="/messages"
+                  state={{ contact: data }}
                   className="px-8 py-3 bg-[#007749] text-white font-bold rounded-xl shadow-xl hover:bg-[#00663d] transition-all transform hover:-translate-y-1 flex items-center gap-2"
                 >
                   <MdChat className="text-xl" />
@@ -315,6 +316,7 @@ const ProfilMentor = () => {
                   {req.status === 'accepted' && (
                     <Link 
                       to="/messages"
+                      state={{ contact: req.aprenant }}
                       className="flex-1 flex items-center justify-center gap-1 py-2 bg-[#007749] text-white text-sm font-bold rounded-xl hover:bg-[#00663d] transition-colors shadow-sm"
                     >
                       <MdChat className="text-lg" />
@@ -407,7 +409,7 @@ const ProfilMentor = () => {
 
       <Footer />
     </div>
-  )
-}
+  );
+};
 
 export default ProfilMentor;

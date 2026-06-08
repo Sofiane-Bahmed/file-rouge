@@ -17,6 +17,15 @@ export const initSocket = (server) => {
           userSockets.set(normalizedId, ws);
           ws.userId = normalizedId;
           console.log(`User ${normalizedId} authenticated via WebSocket`);
+        } else if (data.type === 'TYPING') {
+          const { receiverId, isTyping } = data;
+          sendNotification(receiverId, {
+            type: 'TYPING_STATUS',
+            data: {
+              senderId: ws.userId,
+              isTyping
+            }
+          });
         }
       } catch (e) {
         console.error('Error parsing WebSocket message:', e);

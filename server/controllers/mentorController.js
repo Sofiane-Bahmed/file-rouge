@@ -1,5 +1,5 @@
 
-import cloudinary from "cloudinary";
+import { v2 as cloudinary } from 'cloudinary';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
@@ -28,12 +28,12 @@ export const viewMentorProfile = async (req, res) => {
 
 export const updateMentorProfile = async (req, res) => {
 
- 
+
   const { lastName, firstName, company, domain, experience, disponibility, about, skills, localisation, responseTime, price } = req.body;
 
   const mentorId = req.params.id;
 
- 
+
   try {
     const mentor = await Mentor.findById(mentorId);
 
@@ -68,7 +68,6 @@ export const updateMentorProfile = async (req, res) => {
 export const updateMentorImage = async (req, res) => {
 
   try {
-
     const mentorId = req.params.id;
     const mentor = await Mentor.findById(mentorId);
 
@@ -83,8 +82,12 @@ export const updateMentorImage = async (req, res) => {
     }
 
     //verify image url existence 
-    if (mentor?.image?.url !== "") {
-      await cloudinary.uploader.destroy(mentor?.image?.publicId)
+    if (mentor?.image?.publicId) {
+      try {
+        await cloudinary.uploader.destroy(mentor.image.publicId);
+      } catch (err) {
+        console.error("Cloudinary destroy error:", err);
+      }
     }
 
     // Upload image to Cloudinary
@@ -171,7 +174,7 @@ export const aprenantProgress = async (req, res) => {
     const aprenantOverallProgress = aprenantProgress / aprenantSessions.length;
 
     // Update the apprentice's overall progress
-    
+
     const aprenant = await Aprenant.findById(session.aprenant._id);
     aprenant.progress = aprenantOverallProgress;
     await aprenant.save();

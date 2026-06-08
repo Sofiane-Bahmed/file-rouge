@@ -1,9 +1,9 @@
 import { Message } from "../models/message.js"
 import { User } from "../models/user.js";
 import { sendNotification } from "../socket.js";
+import mongoose from "mongoose";
 
 // envoyer un message
-
 export const sendMessage = async (req, res) => {
   const { senderId, receiverId, message } = req.body;
 
@@ -15,7 +15,6 @@ export const sendMessage = async (req, res) => {
       return res.status(404).json({ message: "Sender or receiver not found." });
     }
 
-    // Create a unique conversation ID (alphabetical order of IDs to keep it consistent)
     const conversationId = [senderId, receiverId].sort().join("_");
 
     const newMessage = new Message({
@@ -32,6 +31,7 @@ export const sendMessage = async (req, res) => {
       type: 'NEW_MESSAGE',
       message: `New message from ${sender.firstName}`,
       data: {
+        _id: newMessage._id,
         senderId,
         message,
         conversationId,
@@ -45,8 +45,7 @@ export const sendMessage = async (req, res) => {
   }
 };
 
-// recuperer les messages entre le mentor et l'aprenant
-
+// recuperer les messages
 export const getMessages = async (req, res) => {
   const { senderId, receiverId } = req.query;
 
@@ -63,29 +62,136 @@ export const getMessages = async (req, res) => {
   }
 };
 
+// recuperer les conversations avec le dernier message et le nombre de messages non lus
 export const getConversations = async (req, res) => {
   const { userId } = req.params;
   try {
-    // This is a bit complex: we want unique users the current user has chatted with
-    const messages = await Message.find({
-      $or: [{ sender: userId }, { receiver: userId }]
-    }).sort({ createdAt: -1 });
+    const conversations = await Message.aggregate([
+      {
+        $match: {
+          $or: [
+            { sender: new mongoose.Types.ObjectId(userId) },
+            { receiver: new mongoose.Types.ObjectId(userId) }
+          ]
+        }
+      },
+      {
+        $sort: { createdAt: -1 }
+      },
+      {
+        $group: {
+          _id: "$conversationId",
+          lastMessage: { $first: "$$ROOT" },
+          unreadCount: {
+            $sum: {
+              $cond: [
+                {
+                  $and: [
+                    { $eq: ["$receiver", new mongoose.Types.ObjectId(userId)] },
+                    { $eq: ["$read", false] }
+                  ]
+                },
+                1,
+                0
+              ]
+            }
+          }
+        }
+      },
+      {
+        $lookup: {
+          from: "users",
+          let: {
+            sender: "$lastMessage.sender",
+            receiver: "$lastMessage.receiver"
+          },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $in: ["$_id", ["$$sender", "$$receiver"]] },
+                    { $ne: ["$_id", new mongoose.Types.ObjectId(userId)] }
+                  ]
+                }
+              }
+            },
+            {
+              $project: {
+                firstName: 1,
+                lastName: 1,
+                image: 1,
+                userRole: 1
+              }
+            }
+          ],
+          as: "contact"
+        }
+      },
+      {
+        $unwind: "$contact"
+      },
+      {
+        $project: {
+          contact: 1,
+          lastMessage: {
+            message: "$lastMessage.message",
+            createdAt: "$lastMessage.createdAt",
+            sender: "$lastMessage.sender"
+          },
+          unreadCount: 1
+        }
+      },
+      {
+        $sort: { "lastMessage.createdAt": -1 }
+      }
+    ]);
 
-    const contactIds = new Set();
-    messages.forEach(m => {
-      const contactId = m.sender.toString() === userId ? m.receiver.toString() : m.sender.toString();
-      contactIds.add(contactId);
-    });
-
-    const contacts = await User.find({ _id: { $in: Array.from(contactIds) } })
-      .select("firstName lastName userRole image");
-
-    res.status(200).json({ contacts });
+    res.status(200).json({ conversations });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 }
 
+// marquer les messages d'une conversation comme lus
+export const markAsRead = async (req, res) => {
+  const { userId, contactId } = req.body;
+  try {
+    const conversationId = [userId, contactId].sort().join("_");
+    await Message.updateMany(
+      { conversationId, receiver: userId, read: false },
+      { $set: { read: true } }
+    );
+    res.status(200).json({ message: "Messages marked as read" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
 
+// supprimer un message
+export const deleteMessage = async (req, res) => {
+  const { messageId, userId } = req.body;
+  try {
+    const message = await Message.findById(messageId);
+    if (!message) {
+      return res.status(404).json({ message: "Message not found" });
+    }
 
+    // Verify that the user is the sender
+    if (message.sender.toString() !== userId) {
+      return res.status(403).json({ message: "You can only delete your own messages" });
+    }
 
+    await Message.findByIdAndDelete(messageId);
+
+    // Notify Receiver
+    sendNotification(message.receiver.toString(), {
+      type: 'DELETE_MESSAGE',
+      data: { messageId, conversationId: message.conversationId }
+    });
+
+    res.status(200).json({ message: "Message deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}

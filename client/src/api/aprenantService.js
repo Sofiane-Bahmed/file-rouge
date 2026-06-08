@@ -12,8 +12,8 @@ export const updateAprenantProfile = (aprenantId, formData) => {
   return apiClient.put(`/aprenants/updateApprenantProfile/${aprenantId}`, formData);
 };
 
-export const updateAprenantImage = (formData) => {
-  return apiClient.post('/aprenants/updateImage', formData, {
+export const updateAprenantImage = (aprenantId, formData) => {
+  return apiClient.put(`/aprenants/updateApprenantProfileImage/${aprenantId}`, formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
