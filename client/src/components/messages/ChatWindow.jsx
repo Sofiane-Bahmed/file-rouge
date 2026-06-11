@@ -51,10 +51,10 @@ const ChatWindow = ({ selectedContact, messages, onSendMessage, onDeleteMessage,
   const groupedMessages = messages.reduce((acc, m, idx) => {
     const date = new Date(m.createdAt).toLocaleDateString();
     if (!acc[date]) acc[date] = [];
-    
+
     const lastGroup = acc[date][acc[date].length - 1];
     const isMe = (m.sender?._id || m.sender) === currentUserId;
-    
+
     if (lastGroup && lastGroup.isMe === isMe) {
       lastGroup.messages.push(m);
     } else {
@@ -72,8 +72,8 @@ const ChatWindow = ({ selectedContact, messages, onSendMessage, onDeleteMessage,
       <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-white z-10 shrink-0">
         <div className="flex items-center gap-4">
           <div className="relative">
-            <img 
-              src={selectedContact.image?.url || "https://via.placeholder.com/50"} 
+            <img
+              src={selectedContact.image?.url || "https://via.placeholder.com/50"}
               className="w-10 h-10 rounded-full object-cover border border-gray-100"
               alt=""
             />
@@ -105,24 +105,24 @@ const ChatWindow = ({ selectedContact, messages, onSendMessage, onDeleteMessage,
                 {date === new Date().toLocaleDateString() ? "Today" : date}
               </span>
             </div>
-            
+
             {groups.map((group, gIdx) => (
               <div key={gIdx} className={`flex gap-3 ${group.isMe ? 'flex-row-reverse' : 'flex-row'}`}>
                 {!group.isMe && (
-                  <img 
-                    src={selectedContact.image?.url || "https://via.placeholder.com/50"} 
+                  <img
+                    src={selectedContact.image?.url || "https://via.placeholder.com/50"}
                     className="w-8 h-8 rounded-full object-cover mt-auto shadow-sm"
                     alt=""
                   />
                 )}
                 <div className={`flex flex-col gap-1 ${group.isMe ? 'items-end' : 'items-start'} max-w-[85%] md:max-w-[70%]`}>
                   {group.messages.map((m, mIdx) => (
-                    <div 
-                      key={mIdx} 
+                    <div
+                      key={mIdx}
                       className="group relative flex items-center"
                     >
                       {group.isMe && (
-                        <button 
+                        <button
                           onClick={() => onDeleteMessage(m._id)}
                           className="opacity-0 group-hover:opacity-100 p-2 text-gray-400 hover:text-red-500 transition-all"
                           title="Delete message"
@@ -130,20 +130,19 @@ const ChatWindow = ({ selectedContact, messages, onSendMessage, onDeleteMessage,
                           <MdDelete size={16} />
                         </button>
                       )}
-                      
-                      <div 
-                        className={`px-4 py-2.5 rounded-2xl text-sm shadow-sm transition-all hover:shadow-md ${
-                          group.isMe 
-                          ? 'bg-[#007749] text-white rounded-br-none' 
-                          : 'bg-white border border-gray-100 text-gray-800 rounded-bl-none'
-                        }`}
+
+                      <div
+                        className={`px-4 py-2.5 rounded-2xl text-sm shadow-sm transition-all hover:shadow-md ${group.isMe
+                            ? 'bg-[#007749] text-white rounded-br-none'
+                            : 'bg-white border border-gray-100 text-gray-800 rounded-bl-none'
+                          }`}
                         title={new Date(m.createdAt).toLocaleTimeString()}
                       >
                         <p className="leading-relaxed whitespace-pre-wrap">{m.message}</p>
                       </div>
 
                       {!group.isMe && (
-                         <span className="w-8"></span> // Spacer for alignment
+                        <span className="w-8"></span> // Spacer for alignment
                       )}
                     </div>
                   ))}
@@ -157,8 +156,8 @@ const ChatWindow = ({ selectedContact, messages, onSendMessage, onDeleteMessage,
         ))}
         {isTyping && (
           <div className="flex gap-3 items-end">
-            <img 
-              src={selectedContact.image?.url || "https://via.placeholder.com/50"} 
+            <img
+              src={selectedContact.image?.url || "https://via.placeholder.com/50"}
               className="w-8 h-8 rounded-full object-cover shadow-sm"
               alt=""
             />
@@ -182,7 +181,7 @@ const ChatWindow = ({ selectedContact, messages, onSendMessage, onDeleteMessage,
               <MdEmojiEmotions size={24} />
             </button>
           </div>
-          
+
           <div className="flex-1 relative">
             <textarea
               rows="1"
@@ -202,11 +201,10 @@ const ChatWindow = ({ selectedContact, messages, onSendMessage, onDeleteMessage,
           <button
             type="submit"
             disabled={!newMessage.trim()}
-            className={`p-3.5 rounded-2xl transition-all shadow-lg flex items-center justify-center ${
-              newMessage.trim() 
-              ? 'bg-[#007749] text-white shadow-[#007749]/20 hover:scale-105 active:scale-95' 
-              : 'bg-gray-100 text-gray-300 shadow-none cursor-not-allowed'
-            }`}
+            className={`p-3.5 rounded-2xl transition-all shadow-lg flex items-center justify-center ${newMessage.trim()
+                ? 'bg-[#007749] text-white shadow-[#007749]/20 hover:scale-105 active:scale-95'
+                : 'bg-gray-100 text-gray-300 shadow-none cursor-not-allowed'
+              }`}
           >
             <MdSend className="text-xl" />
           </button>

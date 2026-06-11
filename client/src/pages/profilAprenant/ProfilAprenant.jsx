@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { MdChat } from 'react-icons/md';
+import { MdChat, MdInfo, MdWork, MdDashboard, MdSearch } from 'react-icons/md';
 import { useParams, Link } from "react-router-dom";
 import { useAprenantProfile } from '../../hooks/useAprenantProfile';
 import { updateAprenantImage } from '../../api/aprenantService';
@@ -11,6 +11,8 @@ import Footer from "../../components/footer/Footer";
 import ProfileHeader from "../../components/profile/ProfileHeader";
 import ProfileSection from "../../components/profile/ProfileSection";
 import TagsSection from "../../components/profile/TagsSection";
+
+import ProfileSkeleton from "../../components/profile/ProfileSkeleton";
 
 const ProfilAprenant = () => {
   const { aprenantId } = useParams();
@@ -46,11 +48,7 @@ const ProfilAprenant = () => {
   };
 
   if (loading && !data) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#007749]"></div>
-      </div>
-    );
+    return <ProfileSkeleton />;
   }
 
   const breadcrumbs = [
@@ -59,7 +57,7 @@ const ProfilAprenant = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[#F3F2EF]">
       <NavBar />
       
       <ProfileHeader 
@@ -78,7 +76,7 @@ const ProfilAprenant = () => {
           <Link 
             to="/messages"
             state={{ contact: data }}
-            className="px-6 py-2 bg-[#007749] text-white font-bold rounded-xl shadow-xl hover:bg-[#00663d] transition-all transform hover:-translate-y-1 flex items-center gap-2 text-sm"
+            className="px-6 py-2 bg-[#007749] text-white font-bold rounded-full shadow-md hover:bg-[#00663d] transition-all flex items-center gap-2 text-sm"
           >
             <MdChat className="text-lg" />
             Message Learner
@@ -86,48 +84,63 @@ const ProfilAprenant = () => {
         )}
       </ProfileHeader>
 
-      <div className="max-w-screen-xl mx-auto px-4 py-16">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-          <div className="lg:col-span-2 space-y-4">
-            <ProfileSection title="About Me">
-              <div className="prose prose-teal max-w-none text-gray-600 leading-relaxed text-lg">
+      <main className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          {/* Main Column */}
+          <div className="lg:col-span-8 space-y-6">
+            <ProfileSection title="About Me" icon={<MdInfo />}>
+              <div className="text-gray-600 leading-relaxed whitespace-pre-line">
                 {data?.about || "No about information provided."}
               </div>
             </ProfileSection>
 
-            <ProfileSection title="Interests & Domains">
+            <ProfileSection title="Interests & Domains" icon={<MdWork />}>
               <TagsSection tags={data?.domainInteret} />
             </ProfileSection>
 
             {isOwner && (
-              <ProfileSection title="My Mentorship Sessions">
-                <div className="bg-gray-50 rounded-3xl p-6 border border-gray-100 overflow-hidden">
+              <ProfileSection title="My Mentorship Sessions" icon={<MdDashboard />}>
+                <div className="overflow-hidden">
                   <Table aprenant={data} />
                 </div>
               </ProfileSection>
             )}
           </div>
 
+          {/* Sidebar */}
           {isOwner && (
-            <div className="space-y-8">
-              <div className="bg-white border border-gray-100 shadow-2xl shadow-gray-200/50 rounded-3xl p-8 sticky top-8">
-                <h3 className="text-xl font-bold text-gray-900 mb-6">Quick Links</h3>
-                <div className="mt-8 pt-8 border-t border-gray-100">
-                  <h4 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Actions</h4>
-                  <div className="space-y-4">
-                    <Link to={`/dashboardAprenant/${aprenantId}`} className="w-full inline-flex items-center justify-center py-4 bg-[#007749] text-white font-bold rounded-2xl shadow-lg shadow-[#007749]/20 hover:bg-[#00663d] transition-all transform hover:scale-[1.02]">
-                      Go to Dashboard
-                    </Link>
-                    <Link to="/mentors" className="w-full inline-flex items-center justify-center py-4 bg-white text-[#007749] border-2 border-[#007749] font-bold rounded-2xl hover:bg-gray-50 transition-all transform hover:scale-[1.02]">
-                      Find a New Mentor
-                    </Link>
-                  </div>
+            <aside className="lg:col-span-4 space-y-6">
+              <div className="bg-white border border-gray-200 shadow-sm rounded-xl p-6">
+                <h3 className="text-lg font-bold text-gray-900 mb-6 border-b border-gray-50 pb-3">Quick Actions</h3>
+                <div className="space-y-3">
+                  <Link 
+                    to={`/dashboardAprenant/${aprenantId}`} 
+                    className="w-full flex items-center justify-center gap-2 py-3 bg-[#007749] text-white font-bold rounded-xl shadow-md hover:bg-[#00663d] transition-all"
+                  >
+                    <MdDashboard className="text-xl" />
+                    Go to Dashboard
+                  </Link>
+                  <Link 
+                    to="/mentors" 
+                    className="w-full flex items-center justify-center gap-2 py-3 bg-white text-[#007749] border-2 border-[#007749] font-bold rounded-xl hover:bg-gray-50 transition-all"
+                  >
+                    <MdSearch className="text-xl" />
+                    Find a Mentor
+                  </Link>
                 </div>
               </div>
-            </div>
+
+              <div className="bg-white border border-gray-200 shadow-sm rounded-xl p-6">
+                <h3 className="text-lg font-bold text-gray-900 mb-4">Profile Strength</h3>
+                <div className="w-full bg-gray-100 rounded-full h-2.5 mb-2">
+                  <div className="bg-[#007749] h-2.5 rounded-full" style={{ width: '85%' }}></div>
+                </div>
+                <p className="text-xs text-gray-500">Your profile is almost complete! Adding more details helps mentors find you.</p>
+              </div>
+            </aside>
           )}
         </div>
-      </div>
+      </main>
 
       {isEditing && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto">

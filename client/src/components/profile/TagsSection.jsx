@@ -6,11 +6,11 @@ const TagsSection = ({ tags, emptyMessage = "No information provided." }) => {
   }
 
   return (
-    <div className="flex flex-wrap gap-3">
+    <div className="flex flex-wrap gap-2">
       {tags.map((tag, index) => (
         <span 
           key={index}
-          className="px-5 py-2 bg-[#F0F9F1] text-[#007749] border border-[#AAD4C1]/30 rounded-full text-sm font-bold hover:bg-[#AAD4C1]/20 transition-colors"
+          className="px-4 py-1.5 bg-gray-50 text-gray-700 border border-gray-200 rounded-lg text-sm font-medium hover:border-[#AAD4C1] hover:bg-[#F0F9F1] transition-all cursor-default"
         >
           {tag}
         </span>

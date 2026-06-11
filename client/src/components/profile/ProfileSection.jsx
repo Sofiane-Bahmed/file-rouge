@@ -1,14 +1,18 @@
 import React from 'react';
 
-const ProfileSection = ({ title, children, icon }) => {
+const ProfileSection = ({ title, children, icon, action }) => {
   return (
-    <section className="mb-12">
-      <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-        <span className="w-8 h-1 bg-[#AAD4C1] mr-3 rounded-full"></span>
-        {icon && <span className="mr-2">{icon}</span>}
-        {title}
-      </h2>
-      <div className="bg-white rounded-2xl p-2">
+    <section className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden mb-6">
+      <div className="px-6 py-5 border-b border-gray-100 flex items-center justify-between">
+        <h2 className="text-xl font-bold text-gray-900 flex items-center">
+          {icon && <span className="mr-3 text-[#007749] text-2xl">{icon}</span>}
+          {title}
+        </h2>
+        {action && (
+          <div>{action}</div>
+        )}
+      </div>
+      <div className="px-6 py-6">
         {children}
       </div>
     </section>
