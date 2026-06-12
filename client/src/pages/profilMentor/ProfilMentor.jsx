@@ -68,7 +68,7 @@ const ProfilMentor = () => {
         mentorId: mentorId,
         message: requestMessage
       });
-      
+
       setRequestStatus('pending');
       setIsRequestModalOpen(false);
       alert("Mentorship request sent successfully!");
@@ -88,13 +88,13 @@ const ProfilMentor = () => {
 
     try {
       const actionFn = actionType === 'accept' ? acceptMentorship : rejectMentorship;
-      
+
       await actionFn({
         requestId: selectedRequestId,
         mentorId: mentorId,
         responseMessage: responseMsg
       });
-      
+
       alert(`Request ${actionType}ed successfully!`);
       setIsResponseModalOpen(false);
       refetch();
@@ -110,7 +110,7 @@ const ProfilMentor = () => {
   }
 
   const breadcrumbs = [
-    { label: 'Home', to: '/', icon: <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg> },
+    { label: 'Home', to: '/', icon: <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" /></svg> },
     { label: 'Mentors', to: '/mentors' },
     { label: `${data?.firstName} ${data?.lastName}` }
   ];
@@ -118,8 +118,8 @@ const ProfilMentor = () => {
   return (
     <div className="min-h-screen bg-[#F3F2EF]">
       <NavBar />
-      
-      <ProfileHeader 
+
+      <ProfileHeader
         user={data}
         isOwner={isOwnProfile}
         onEdit={() => setIsEditing(true)}
@@ -134,24 +134,23 @@ const ProfilMentor = () => {
         <div className="flex gap-3 w-full md:w-auto">
           {isAprenant && (
             <>
-              <button 
+              <button
                 onClick={() => !requestStatus && setIsRequestModalOpen(true)}
                 disabled={!!requestStatus}
-                className={`flex-1 md:flex-none px-6 py-2 font-bold rounded-full transition-all border-2 ${
-                  requestStatus === 'pending' ? 'bg-yellow-50 border-yellow-200 text-yellow-600 cursor-default' :
+                className={`flex-1 md:flex-none px-6 py-2 font-bold rounded-full transition-all border-2 ${requestStatus === 'pending' ? 'bg-yellow-50 border-yellow-200 text-yellow-600 cursor-default' :
                   requestStatus === 'accepted' ? 'bg-green-50 border-green-200 text-green-600 cursor-default' :
-                  requestStatus === 'rejected' ? 'bg-red-50 border-red-200 text-red-600 cursor-default' :
-                  'bg-[#007749] border-[#007749] text-white hover:bg-[#00663d]'
-                }`}
+                    requestStatus === 'rejected' ? 'bg-red-50 border-red-200 text-red-600 cursor-default' :
+                      'bg-[#007749] border-[#007749] text-white hover:bg-[#00663d]'
+                  }`}
               >
                 {requestStatus === 'pending' ? 'Pending' :
-                 requestStatus === 'accepted' ? 'Enrolled' :
-                 requestStatus === 'rejected' ? 'Rejected' :
-                 'Enroll Now'}
+                  requestStatus === 'accepted' ? 'Enrolled' :
+                    requestStatus === 'rejected' ? 'Rejected' :
+                      'Enroll Now'}
               </button>
-              
+
               {requestStatus === 'accepted' && (
-                <Link 
+                <Link
                   to="/messages"
                   state={{ contact: data }}
                   className="px-6 py-2 bg-white text-gray-700 border-2 border-gray-300 font-bold rounded-full hover:bg-gray-50 transition-all flex items-center justify-center gap-2"
@@ -198,33 +197,32 @@ const ProfilMentor = () => {
                     {receivedRequests.map((req) => (
                       <div key={req._id} className="border border-gray-100 rounded-xl p-4 hover:bg-gray-50 transition-all group">
                         <div className="flex items-center gap-3 mb-3">
-                          <img 
-                            src={req.aprenant?.image?.url || "https://via.placeholder.com/100"} 
+                          <img
+                            src={req.aprenant?.image?.url || "https://via.placeholder.com/100"}
                             className="w-12 h-12 rounded-full object-cover border border-gray-200"
                             alt="Learner"
                           />
                           <div>
                             <h4 className="font-bold text-gray-900 group-hover:text-[#007749] transition-colors">{req.aprenant?.firstName} {req.aprenant?.lastName}</h4>
-                            <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-md ${
-                              req.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                            <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-md ${req.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
                               req.status === 'accepted' ? 'bg-green-100 text-green-700' :
-                              'bg-red-100 text-red-700'
-                            }`}>
+                                'bg-red-100 text-red-700'
+                              }`}>
                               {req.status}
                             </span>
                           </div>
                         </div>
                         <p className="text-gray-500 text-sm mb-4 line-clamp-2">"{req.message}"</p>
-                        
+
                         <div className="flex gap-2">
-                          <Link 
+                          <Link
                             to={`/profilAprenant/${req.aprenant?._id}`}
                             className="flex-1 py-1.5 bg-gray-100 text-gray-700 text-xs font-bold rounded-lg hover:bg-gray-200 transition-colors text-center"
                           >
                             View Profile
                           </Link>
                           {req.status === 'pending' ? (
-                            <button 
+                            <button
                               onClick={() => {
                                 setSelectedRequestId(req._id);
                                 setActionType('accept');
@@ -235,7 +233,7 @@ const ProfilMentor = () => {
                               Accept
                             </button>
                           ) : req.status === 'accepted' && (
-                            <Link 
+                            <Link
                               to="/messages"
                               state={{ contact: req.aprenant }}
                               className="flex-1 py-1.5 bg-[#007749] text-white text-xs font-bold rounded-lg hover:bg-[#00663d] transition-colors text-center"
@@ -293,7 +291,7 @@ const ProfilMentor = () => {
                   <span className="text-gray-500 ml-1">/ month</span>
                 </div>
                 {isAprenant && !requestStatus && (
-                  <button 
+                  <button
                     onClick={() => setIsRequestModalOpen(true)}
                     className="w-full py-3 bg-[#007749] text-white font-bold rounded-xl hover:bg-[#00663d] transition-all shadow-md hover:shadow-lg"
                   >
@@ -327,14 +325,14 @@ const ProfilMentor = () => {
             <p className="text-gray-600 mb-6">
               Introduce yourself to {data?.firstName} and explain why you're seeking mentorship.
             </p>
-            
+
             <textarea
               value={requestMessage}
               onChange={(e) => setRequestMessage(e.target.value)}
               placeholder="Tell the mentor about your goals..."
               className="w-full h-40 p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#AAD4C1] focus:border-transparent outline-none resize-none mb-6"
             />
-            
+
             <div className="flex gap-4">
               <button
                 onClick={() => setIsRequestModalOpen(false)}
@@ -366,14 +364,14 @@ const ProfilMentor = () => {
             <p className="text-gray-600 mb-6">
               Write a brief message to the learner explaining your decision.
             </p>
-            
+
             <textarea
               value={responseMsg}
               onChange={(e) => setResponseMsg(e.target.value)}
               placeholder="Your message to the learner..."
               className="w-full h-40 p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#AAD4C1] focus:border-transparent outline-none resize-none mb-6"
             />
-            
+
             <div className="flex gap-4">
               <button
                 onClick={() => setIsResponseModalOpen(false)}
@@ -383,9 +381,8 @@ const ProfilMentor = () => {
               </button>
               <button
                 onClick={handleAction}
-                className={`flex-1 py-3 text-white font-bold rounded-xl transition-colors shadow-lg ${
-                  actionType === 'accept' ? 'bg-[#007749] hover:bg-[#00663d]' : 'bg-red-500 hover:bg-red-600'
-                }`}
+                className={`flex-1 py-3 text-white font-bold rounded-xl transition-colors shadow-lg ${actionType === 'accept' ? 'bg-[#007749] hover:bg-[#00663d]' : 'bg-red-500 hover:bg-red-600'
+                  }`}
               >
                 Confirm {actionType}
               </button>
