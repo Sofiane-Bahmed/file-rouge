@@ -37,7 +37,7 @@ function App() {
             <>
               <NavBar />
               <Hero />
-              <div className="relative z-10 mt-0 md:-mt-24 lg:-mt-32 px-4 max-w-7xl mx-auto">
+              <div className="relative z-10 mt-0 hidden md:block lg:block md:-mt-24 lg:-mt-32 px-4 max-w-7xl mx-auto">
                 <ServiceContainer />
               </div>
 
