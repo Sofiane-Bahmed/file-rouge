@@ -5,7 +5,6 @@ import { getMentorshipRequestsAprenant, getMentorshipRequests } from '../api/req
 export const useMentorProfile = (mentorId, localUser, isAprenant, isOwnProfile) => {
   const [data, setData] = useState(null);
   const [requestStatus, setRequestStatus] = useState(null);
-  const [receivedRequests, setReceivedRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [refetchIndex, setRefetchIndex] = useState(0);
@@ -29,11 +28,6 @@ export const useMentorProfile = (mentorId, localUser, isAprenant, isOwnProfile) 
             setRequestStatus(currentMentorRequest.status);
           }
         }
-
-        if (isOwnProfile) {
-          const receivedResponse = await getMentorshipRequests(mentorId);
-          setReceivedRequests(receivedResponse.data?.requests || []);
-        }
       } catch (err) {
         console.error('Error fetching mentor profile data:', err);
         setError(err);
@@ -45,5 +39,5 @@ export const useMentorProfile = (mentorId, localUser, isAprenant, isOwnProfile) 
     fetchData();
   }, [mentorId, isAprenant, localUser?.userId, isOwnProfile, refetchIndex]);
 
-  return { data, requestStatus, setRequestStatus, receivedRequests, loading, error, refetch };
+  return { data, requestStatus, setRequestStatus, loading, error, refetch };
 };

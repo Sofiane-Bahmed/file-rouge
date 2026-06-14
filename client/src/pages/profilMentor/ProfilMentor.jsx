@@ -23,17 +23,13 @@ const ProfilMentor = () => {
   const isAprenant = localUser?.userRole === "aprenant";
   const isOwnProfile = localUser?.userId === mentorId;
 
-  const { data, requestStatus, setRequestStatus, receivedRequests, loading, refetch } = useMentorProfile(mentorId, localUser, isAprenant, isOwnProfile);
+  const { data, requestStatus, setRequestStatus, loading, refetch } = useMentorProfile(mentorId, localUser, isAprenant, isOwnProfile);
 
   const [isEditing, setIsEditing] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
   const [requestMessage, setRequestMessage] = useState("");
   const [isSendingRequest, setIsSendingRequest] = useState(false);
-  const [isResponseModalOpen, setIsResponseModalOpen] = useState(false);
-  const [selectedRequestId, setSelectedRequestId] = useState(null);
-  const [responseMsg, setResponseMsg] = useState("");
-  const [actionType, setActionType] = useState(""); // 'accept' or 'reject'
 
   const handleImageChange = async (event) => {
     const file = event.target.files[0];
@@ -77,31 +73,6 @@ const ProfilMentor = () => {
       alert(error.response?.data?.message || "Failed to send mentorship request.");
     } finally {
       setIsSendingRequest(false);
-    }
-  };
-
-  const handleAction = async () => {
-    if (!responseMsg.trim()) {
-      alert("Please enter a response message.");
-      return;
-    }
-
-    try {
-      const actionFn = actionType === 'accept' ? acceptMentorship : rejectMentorship;
-
-      await actionFn({
-        requestId: selectedRequestId,
-        mentorId: mentorId,
-        responseMessage: responseMsg
-      });
-
-      alert(`Request ${actionType}ed successfully!`);
-      setIsResponseModalOpen(false);
-      refetch();
-      setResponseMsg("");
-    } catch (error) {
-      console.error(`Error ${actionType}ing request:`, error);
-      alert("Action failed. Please try again.");
     }
   };
 
@@ -181,73 +152,6 @@ const ProfilMentor = () => {
             <ProfileSection title="Mentorship Services" icon={<MdStar />}>
               <Table mentor={data} />
             </ProfileSection>
-
-            {isOwnProfile && receivedRequests.length > 0 && (
-              <section className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-                <div className="px-6 py-5 border-b border-gray-100">
-                  <h2 className="text-xl font-bold text-gray-900 flex items-center">
-                    <span className="mr-3 text-[#007749] text-2xl">
-                      <MdPersonSearch />
-                    </span>
-                    Mentorship Requests
-                  </h2>
-                </div>
-                <div className="p-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {receivedRequests.map((req) => (
-                      <div key={req._id} className="border border-gray-100 rounded-xl p-4 hover:bg-gray-50 transition-all group">
-                        <div className="flex items-center gap-3 mb-3">
-                          <img
-                            src={req.aprenant?.image?.url || "https://via.placeholder.com/100"}
-                            className="w-12 h-12 rounded-full object-cover border border-gray-200"
-                            alt="Learner"
-                          />
-                          <div>
-                            <h4 className="font-bold text-gray-900 group-hover:text-[#007749] transition-colors">{req.aprenant?.firstName} {req.aprenant?.lastName}</h4>
-                            <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-md ${req.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
-                              req.status === 'accepted' ? 'bg-green-100 text-green-700' :
-                                'bg-red-100 text-red-700'
-                              }`}>
-                              {req.status}
-                            </span>
-                          </div>
-                        </div>
-                        <p className="text-gray-500 text-sm mb-4 line-clamp-2">"{req.message}"</p>
-
-                        <div className="flex gap-2">
-                          <Link
-                            to={`/profilAprenant/${req.aprenant?._id}`}
-                            className="flex-1 py-1.5 bg-gray-100 text-gray-700 text-xs font-bold rounded-lg hover:bg-gray-200 transition-colors text-center"
-                          >
-                            View Profile
-                          </Link>
-                          {req.status === 'pending' ? (
-                            <button
-                              onClick={() => {
-                                setSelectedRequestId(req._id);
-                                setActionType('accept');
-                                setIsResponseModalOpen(true);
-                              }}
-                              className="flex-1 py-1.5 bg-[#007749] text-white text-xs font-bold rounded-lg hover:bg-[#00663d] transition-colors"
-                            >
-                              Accept
-                            </button>
-                          ) : req.status === 'accepted' && (
-                            <Link
-                              to="/messages"
-                              state={{ contact: req.aprenant }}
-                              className="flex-1 py-1.5 bg-[#007749] text-white text-xs font-bold rounded-lg hover:bg-[#00663d] transition-colors text-center"
-                            >
-                              Message
-                            </Link>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </section>
-            )}
           </div>
 
           {/* Sidebar */}
@@ -354,43 +258,6 @@ const ProfilMentor = () => {
         </div>
       )}
 
-      {/* Response Modal */}
-      {isResponseModalOpen && (
-        <div className="fixed inset-0 z-[120] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <div className="bg-white rounded-2xl p-8 max-w-lg w-full shadow-2xl">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4 capitalize">
-              {actionType} Mentorship Request
-            </h2>
-            <p className="text-gray-600 mb-6">
-              Write a brief message to the learner explaining your decision.
-            </p>
-
-            <textarea
-              value={responseMsg}
-              onChange={(e) => setResponseMsg(e.target.value)}
-              placeholder="Your message to the learner..."
-              className="w-full h-40 p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#AAD4C1] focus:border-transparent outline-none resize-none mb-6"
-            />
-
-            <div className="flex gap-4">
-              <button
-                onClick={() => setIsResponseModalOpen(false)}
-                className="flex-1 py-3 bg-gray-100 text-gray-700 font-bold rounded-xl hover:bg-gray-200 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleAction}
-                className={`flex-1 py-3 text-white font-bold rounded-xl transition-colors shadow-lg ${actionType === 'accept' ? 'bg-[#007749] hover:bg-[#00663d]' : 'bg-red-500 hover:bg-red-600'
-                  }`}
-              >
-                Confirm {actionType}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
       {isEditing && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto">
           <div className="max-w-4xl w-full">
@@ -402,6 +269,7 @@ const ProfilMentor = () => {
       <Footer />
     </div>
   );
+
 };
 
 export default ProfilMentor;

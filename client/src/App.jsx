@@ -7,6 +7,7 @@ import SignUp from "./pages/signUp/SignUp";
 import LogIn from "./pages/logIn/LogIn";
 import Mentors from "./pages/mentors/Mentors";
 import ProfilMentor from "./pages/profilMentor/ProfilMentor";
+import DashboardMentor from './pages/profilMentor/DashboardMentor';
 import ProfilAprenant from "./pages/profilAprenant/ProfilAprenant";
 import DashboardAprenant from './pages/profilAprenant/DashboardAprenant';
 import Messages from "./pages/messages/Messages";
@@ -70,6 +71,7 @@ function App() {
           <Route path="/profilAprenant/:aprenantId" element={<ProfilAprenant />} />
           <Route path="/dashboardAprenant/:aprenantId" element={<DashboardAprenant />} />
           <Route path="/profilMentor/:mentorId" element={<ProfilMentor />} />
+          <Route path="/dashboardMentor/:mentorId" element={<DashboardMentor />} />
         </Routes>
       </div>
     </SocketProvider>
