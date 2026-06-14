@@ -1,53 +1,33 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { useParams, Link, Navigate } from "react-router-dom";
 import { useDashboardData } from '../../hooks/useDashboardData';
-import { updateAprenantImage } from '../../api/aprenantService';
 
 import NavBar from "../../components/navbar/NavBar";
 import Footer from "../../components/footer/Footer";
 import ProgressComponent from "../../components/Progress";
 import Table from "../../components/Table";
-import { MdDashboard, MdAssignment, MdTimeline, MdChat, MdPersonSearch, MdSearch } from 'react-icons/md';
+import { MdDashboard, MdAssignment, MdTimeline, MdChat, MdPersonSearch, MdSearch, MdVideocam } from 'react-icons/md';
 import DashboardSkeleton from './DashboardSkeleton';
 
-import ProfileHeader from "../../components/profile/ProfileHeader";
 import ProfileSection from "../../components/profile/ProfileSection";
-import FormAprenant from "../../components/AprenantForm";
+import VideoCall from "../../components/video/VideoCall";
 
 const DashboardAprenant = () => {
   const { aprenantId } = useParams();
-  const fileInputRef = useRef(null);
   
   const localUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null;
   const isOwner = localUser?.userId === aprenantId;
 
   const { data, myRequests, loading, refetch } = useDashboardData(aprenantId);
 
-  const [isEditing, setIsEditing] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
+  const [activeCallId, setActiveCallId] = useState(null);
 
   if (!localUser || !isOwner) {
     return <Navigate to="/notFound" replace />;
   }
 
-  const handleImageChange = async (event) => {
-    const file = event.target.files[0];
-    if (!file) return;
-
-    const formData = new FormData();
-    formData.append('image', file);
-    formData.append('aprenantId', aprenantId);
-
-    try {
-      setIsUploading(true);
-      await updateAprenantImage(aprenantId, formData);
-      if (refetch) refetch();
-    } catch (error) {
-      console.error('Error uploading image:', error);
-      alert('Failed to upload image. Please try again.');
-    } finally {
-      setIsUploading(false);
-    }
+  const handleStartCall = (requestId) => {
+    setActiveCallId(requestId);
   };
 
   if (loading && !data) {
@@ -69,7 +49,7 @@ const DashboardAprenant = () => {
     <div className="min-h-screen bg-[#F3F2EF]">
       <NavBar />
       
-      {/* Page Header - Matching Profile style spacing/borders */}
+      {/* Page Header */}
       <div className="bg-white border-b border-gray-200 shadow-sm">
         <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Breadcrumbs */}
@@ -125,18 +105,59 @@ const DashboardAprenant = () => {
             </ProfileSection>
 
             <ProfileSection title="Active Mentorships" icon={<MdAssignment />}>
-              <div className="overflow-hidden">
-                <Table aprenant={data} />
+              <div className="space-y-4">
+                {myRequests.filter(req => req.status === 'accepted').length === 0 ? (
+                  <div className="text-center py-10 bg-gray-50 rounded-xl border border-dashed border-gray-200">
+                    <p className="text-gray-500 text-sm italic">No active mentorships yet.</p>
+                  </div>
+                ) : (
+                  myRequests.filter(req => req.status === 'accepted').map((req) => (
+                    <div key={req._id} className="p-5 bg-white rounded-xl border border-gray-200 shadow-sm flex items-center gap-4 group hover:border-[#AAD4C1] transition-all">
+                      <img 
+                        src={req.mentor?.image?.url || "https://via.placeholder.com/50"} 
+                        className="w-14 h-14 rounded-full object-cover border-2 border-white shadow-md"
+                        alt="Mentor"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-bold text-gray-900 text-lg">{req.mentor?.firstName} {req.mentor?.lastName}</h4>
+                        <p className="text-sm text-gray-500">{req.mentor?.domain || "Mentor"}</p>
+                        <div className="flex gap-4 mt-2">
+                          <Link 
+                            to={`/profilMentor/${req.mentor?._id}`}
+                            className="text-xs font-bold text-[#007749] hover:underline"
+                          >
+                            View Profile
+                          </Link>
+                          <Link 
+                            to="/messages"
+                            state={{ contact: req.mentor }}
+                            className="text-xs font-bold text-[#007749] hover:underline"
+                          >
+                            Message
+                          </Link>
+                        </div>
+                      </div>
+                      <button 
+                        onClick={() => handleStartCall(req._id)}
+                        className="flex flex-col items-center justify-center p-4 bg-blue-600 text-white rounded-2xl hover:bg-blue-700 transition-all shadow-lg hover:shadow-blue-200 group/btn"
+                        title="Join Video Session"
+                      >
+                        <MdVideocam className="text-2xl group-hover/btn:scale-110 transition-transform mb-1" />
+                        <span className="text-[10px] font-bold uppercase tracking-wider">Join Call</span>
+                      </button>
+                    </div>
+                  ))
+                )}
               </div>
             </ProfileSection>
           </div>
 
-          {/* Sidebar - Matching Profile sidebar style */}
+          {/* Sidebar */}
           <aside className="lg:col-span-4 space-y-6">
             <div className="bg-white border border-gray-200 shadow-sm rounded-xl p-6">
               <h3 className="text-lg font-bold text-gray-900 mb-6 border-b border-gray-50 pb-3 flex items-center gap-2">
                 <MdChat className="text-[#007749]" />
-                Mentorship Requests
+                Sent Requests
               </h3>
               
               <div className="space-y-4">
@@ -165,18 +186,11 @@ const DashboardAprenant = () => {
                         </div>
                       </div>
                       
-                      {req.responseMessage && (
-                        <div className="mb-4 p-3 bg-white rounded-lg text-xs text-gray-600 border border-gray-50 italic line-clamp-2">
-                          "{req.responseMessage}"
-                        </div>
-                      )}
-
                       <div className="flex gap-2">
                         <Link 
                           to={`/profilMentor/${req.mentor?._id}`}
                           className="flex-1 flex items-center justify-center gap-1 py-2 bg-white text-gray-700 text-[10px] font-bold rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
                         >
-                          <MdPersonSearch className="text-sm" />
                           Profile
                         </Link>
                         {req.status === 'accepted' && (
@@ -185,7 +199,6 @@ const DashboardAprenant = () => {
                             state={{ contact: req.mentor }}
                             className="flex-1 flex items-center justify-center gap-1 py-2 bg-[#007749] text-white text-[10px] font-bold rounded-lg hover:bg-[#00663d] transition-colors shadow-sm"
                           >
-                            <MdChat className="text-sm" />
                             Message
                           </Link>
                         )}
@@ -207,15 +220,7 @@ const DashboardAprenant = () => {
             </div>
 
             <div className="bg-white border border-gray-200 shadow-sm rounded-xl p-6">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">Profile Strength</h3>
-              <div className="w-full bg-gray-100 rounded-full h-2.5 mb-2">
-                <div className="bg-[#007749] h-2.5 rounded-full" style={{ width: '85%' }}></div>
-              </div>
-              <p className="text-xs text-gray-500">Your profile is almost complete! Adding more details helps mentors find you.</p>
-            </div>
-
-            <div className="bg-white border border-gray-200 shadow-sm rounded-xl p-6">
-              <h3 className="text-lg font-bold text-gray-900 mb-4 border-b border-gray-50 pb-3">Quick Actions</h3>
+              <h3 className="text-lg font-bold text-gray-900 mb-4">Quick Actions</h3>
               <div className="space-y-2">
                 <Link to="/messages" className="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors text-gray-700 group">
                   <div className="w-10 h-10 bg-green-50 rounded-lg flex items-center justify-center group-hover:bg-green-100 transition-colors">
@@ -223,25 +228,17 @@ const DashboardAprenant = () => {
                   </div>
                   <span className="font-bold text-sm">My Messages</span>
                 </Link>
-                <Link to="/mentors" className="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors text-gray-700 group">
-                  <div className="w-10 h-10 bg-green-50 rounded-lg flex items-center justify-center group-hover:bg-green-100 transition-colors">
-                    <MdSearch className="text-[#007749] text-xl" />
-                  </div>
-                  <span className="font-bold text-sm">Browse Mentors</span>
-                </Link>
               </div>
             </div>
           </aside>
         </div>
       </main>
 
-
-      {isEditing && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto">
-          <div className="max-w-4xl w-full">
-            <FormAprenant onCancel={() => setIsEditing(false)} data={data} refetch={refetch} />
-          </div>
-        </div>
+      {activeCallId && (
+        <VideoCall 
+          callId={activeCallId} 
+          onLeave={() => setActiveCallId(null)} 
+        />
       )}
 
       <Footer />

@@ -6,11 +6,12 @@ import { acceptMentorship, rejectMentorship } from '../../api/requestService';
 import NavBar from "../../components/navbar/NavBar";
 import Footer from "../../components/footer/Footer";
 import Table from "../../components/Table";
-import { MdDashboard, MdPeople, MdStar, MdChat, MdPerson, MdCheck, MdClose, MdVisibility } from 'react-icons/md';
+import { MdDashboard, MdPeople, MdStar, MdChat, MdPerson, MdCheck, MdClose, MdVisibility, MdVideocam } from 'react-icons/md';
 import DashboardMentorSkeleton from './DashboardMentorSkeleton';
 
 import ProfileSection from "../../components/profile/ProfileSection";
 import Form from "../../components/Form";
+import VideoCall from "../../components/video/VideoCall";
 
 const DashboardMentor = () => {
   const { mentorId } = useParams();
@@ -25,10 +26,15 @@ const DashboardMentor = () => {
   const [selectedRequestId, setSelectedRequestId] = useState(null);
   const [responseMsg, setResponseMsg] = useState("");
   const [actionType, setActionType] = useState(""); // 'accept' or 'reject'
+  const [activeCallId, setActiveCallId] = useState(null);
 
   if (!localUser || !isOwner) {
     return <Navigate to="/notFound" replace />;
   }
+
+  const handleStartCall = (requestId) => {
+    setActiveCallId(requestId);
+  };
 
   const handleAction = async () => {
     if (!responseMsg.trim()) {
@@ -72,7 +78,6 @@ const DashboardMentor = () => {
 
   const pendingRequests = receivedRequests.filter(req => req.status === 'pending');
   const acceptedRequests = receivedRequests.filter(req => req.status === 'accepted');
-  const rejectedRequests = receivedRequests.filter(req => req.status === 'rejected');
 
   return (
     <div className="min-h-screen bg-[#F3F2EF]">
@@ -280,6 +285,13 @@ const DashboardMentor = () => {
                           </Link>
                         </div>
                       </div>
+                      <button 
+                        onClick={() => handleStartCall(req._id)}
+                        className="p-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors shadow-md group"
+                        title="Start Video Call"
+                      >
+                        <MdVideocam className="text-xl group-hover:scale-110 transition-transform" />
+                      </button>
                     </div>
                   ))}
                 </div>
@@ -370,6 +382,13 @@ const DashboardMentor = () => {
             <Form onCancel={() => setIsEditing(false)} data={data} refetch={refetch} />
           </div>
         </div>
+      )}
+
+      {activeCallId && (
+        <VideoCall 
+          callId={activeCallId} 
+          onLeave={() => setActiveCallId(null)} 
+        />
       )}
 
       <Footer />

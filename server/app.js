@@ -18,6 +18,7 @@ import { sessionRouter } from "./routers/sessionRouter.js"
 import { sessionFeedbackRouter } from "./routers/sessionFeedbackRouter.js"
 import { mentorshipRequestRouter } from "./routers/mentorshipRequestRouter.js"
 import { messageRouter } from "./routers/messageRouter.js";
+import { streamRouter } from "./routers/streamRouter.js";
 import { initSocket } from "./socket.js";
 
 const port = process.env.PORT || 8082;
@@ -65,3 +66,4 @@ app.use("/sessions", sessionRouter)
 app.use("/sessionFeedbacks", sessionFeedbackRouter)
 app.use("/requests", mentorshipRequestRouter)
 app.use("/message", messageRouter)
+app.use("/stream", streamRouter)
