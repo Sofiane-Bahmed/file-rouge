@@ -39,20 +39,32 @@ const VideoCall = ({ callId, onLeave }) => {
   useEffect(() => {
     if (!client || !callId) return;
 
-    const c = client.call('default', callId);
+    // Stream call IDs must be alphanumeric plus _, -, and .
+    const sanitizedCallId = callId.toString().replace(/[^a-zA-Z0-9_\-.]/g, '_');
+    console.log(`Attempting to join call: ${sanitizedCallId} with client:`, client.userID);
+
+    const c = client.call('default', sanitizedCallId);
     let active = true;
 
     c.join({ create: true })
       .then(() => {
-        if (active) setCall(c);
+        if (active) {
+          console.log('Successfully joined call:', sanitizedCallId);
+          setCall(c);
+        }
       })
       .catch((err) => {
-        console.error('Failed to join call:', err);
+        console.error('Failed to join call details:', {
+          error: err,
+          message: err.message,
+          callId: sanitizedCallId,
+          userId: client.userID
+        });
       });
 
     return () => {
       active = false;
-      c.leave().catch(console.error);
+      c.leave().catch(err => console.error('Error leaving call:', err));
       setCall(undefined);
     };
   }, [client, callId]);

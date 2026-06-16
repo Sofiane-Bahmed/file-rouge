@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import axios from "axios";
+import apiClient from '../api/apiClient';
 
 const FilterDropdown = ({ title, options, selectedItems, onToggle, isOpen, onOpen }) => {
   const dropdownRef = useRef(null);
@@ -81,9 +81,7 @@ const FiltreButtons = ({ setData }) => {
   useEffect(() => {
     const filterMentors = async () => {
       try {
-        const response = await axios.get(`http://localhost:8082/aprenants/filtreMentors?skills=${skillsFilter}&domain=${domainFilter}&price=${priceFilter}`, {
-          withCredentials: true
-        });
+        const response = await apiClient.get(`/aprenants/filtreMentors?skills=${skillsFilter}&domain=${domainFilter}&price=${priceFilter}`);
         setData(response.data.mentors);
       } catch (error) {
         console.error("Error filtering mentors:", error);

@@ -90,7 +90,7 @@ export const logIn = async (req, res) => {
     const userId = user._id.toString();
     const userRole = user.userRole;
 
-    res.cookie("auth-token", { authToken }, {
+    res.cookie("auth-token", authToken, {
       maxAge: 60 * 60 * 24 * 1000,
       httpOnly: true,
       sameSite: "Lax",

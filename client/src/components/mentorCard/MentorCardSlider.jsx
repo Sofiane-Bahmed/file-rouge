@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import MentorCard from './MentorCard'
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Pagination, Navigation } from 'swiper';
-import axios from 'axios';
+import apiClient from '../../api/apiClient';
 
 // Import Swiper styles
 import 'swiper/css';
@@ -16,9 +16,7 @@ const MentorCardSlider = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:8082/aprenants/getAvailableMentors', {
-          withCredentials: true,
-        });
+        const response = await apiClient.get('/aprenants/getAvailableMentors');
         setData(response.data);
         setLoading(false);
       } catch (error) {

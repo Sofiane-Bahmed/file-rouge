@@ -1,8 +1,7 @@
-import express from "express";
 import dotenv from "dotenv";
 dotenv.config();
+import express from "express";
 import mongoose from "mongoose";
-import WebSocket from "ws";
 import cookieParser from "cookie-parser"
 import cors from "cors"
 import {v2 as cloudinary} from 'cloudinary';
@@ -36,7 +35,7 @@ mongoose
     initSocket(server);
   })
   .catch((err) => {
-    console.log(err);
+    console.log("Mongoose connection error:", err);
   });
 
 // cloudinary configuration 
@@ -52,8 +51,16 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser())
 
+const allowedOrigins = ["http://localhost:5173", "http://127.0.0.1:5173"];
+
 app.use(cors({
-  origin: "http://localhost:5173",
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   optionsSuccessStatus: 204,
   credentials: true
 }))
@@ -67,3 +74,9 @@ app.use("/sessionFeedbacks", sessionFeedbackRouter)
 app.use("/requests", mentorshipRequestRouter)
 app.use("/message", messageRouter)
 app.use("/stream", streamRouter)
+
+// Global error handler
+app.use((err, req, res, next) => {
+  console.error('Unhandled error:', err);
+  res.status(500).json({ message: 'Internal Server Error', error: err.message });
+});

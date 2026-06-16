@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import apiClient from '../api/apiClient';
 import { Progress, ButtonGroup, Button, Row, Col } from 'rsuite';
 
 const ProgressComponent = () => {
@@ -11,7 +11,7 @@ const ProgressComponent = () => {
     const fetchProgress = async () => {
       if (!localUser?.userId) return;
       try {
-        const response = await axios.get(`http://localhost:8082/aprenants/viewAprenantProfile/${localUser.userId}`, { withCredentials: true });
+        const response = await apiClient.get(`/aprenants/viewAprenantProfile/${localUser.userId}`);
         const progressValue = response.data?.aprenant?.progress || 0;
         setPercent(progressValue);
       } catch (error) {

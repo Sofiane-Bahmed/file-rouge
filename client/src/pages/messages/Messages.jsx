@@ -4,6 +4,7 @@ import { useMessages } from '../../hooks/useMessages';
 import NavBar from '../../components/navbar/NavBar';
 import ContactList from '../../components/messages/ContactList';
 import ChatWindow from '../../components/messages/ChatWindow';
+import MessagesSkeleton from './MessagesSkeleton';
 import { MdArrowBack } from 'react-icons/md';
 
 const Messages = () => {
@@ -29,14 +30,7 @@ const Messages = () => {
   };
 
   if (loading) {
-    return (
-      <div className="flex flex-col h-screen bg-gray-50 overflow-hidden">
-        <NavBar />
-        <div className="flex-1 flex items-center justify-center">
-          <div className="w-12 h-12 border-4 border-[#007749] border-t-transparent rounded-full animate-spin"></div>
-        </div>
-      </div>
-    );
+    return <MessagesSkeleton />;
   }
 
   return (

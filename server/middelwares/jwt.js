@@ -15,7 +15,7 @@ export const createToken = (user) => {
 
 export const adminAutorisation = (req, res, next) => {
 
-    const authToken = req.cookies["auth-token"]?.authToken;
+    const authToken = req.cookies["auth-token"];
    
     if (!authToken) {
       return res.status(401).json("You are not authorized to access this route.");
@@ -39,7 +39,7 @@ export const adminAutorisation = (req, res, next) => {
 
   export const mentorAutorisation = (req, res, next) => {
 
-    const authToken = req.cookies["auth-token"]?.authToken;
+    const authToken = req.cookies["auth-token"];
 
     if (!authToken) {
       console.log("No auth-token cookie found");
@@ -65,7 +65,7 @@ export const adminAutorisation = (req, res, next) => {
 
   export const aprenantAutorisation = (req, res, next) => {
 
-    const authToken = req.cookies["auth-token"]?.authToken;
+    const authToken = req.cookies["auth-token"];
    
     if (!authToken) {
       console.log("No auth-token cookie found (Aprenant)");
@@ -89,7 +89,7 @@ export const adminAutorisation = (req, res, next) => {
   };
 
   export const generalAutorisation = (req, res, next) => {
-    const authToken = req.cookies["auth-token"]?.authToken;
+    const authToken = req.cookies["auth-token"];
    
     if (!authToken) {
       return res.status(401).json({ message: "You must be authenticated to access this route." });
