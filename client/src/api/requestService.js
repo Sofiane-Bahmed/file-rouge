@@ -8,6 +8,10 @@ export const getMentorshipRequestsAprenant = (aprenantId) => {
   return apiClient.get(`/requests/getMentorshipAprenant/${aprenantId}`);
 };
 
+export const getMentorshipRequestById = (requestId) => {
+  return apiClient.get(`/requests/getRequest/${requestId}`);
+};
+
 export const createMentorshipRequest = (data) => {
   return apiClient.post('/requests/createMentorship', data);
 };

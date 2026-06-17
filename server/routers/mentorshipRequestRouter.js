@@ -3,7 +3,8 @@ import  Express  from "express";
 import {acceptMentorshipRequest,rejectMentorshipRequest,
     getMentorshipRequests,
     getMentorshipRequestsApreant,
-    createMentorshipRequest} 
+    createMentorshipRequest,
+    getMentorshipRequestById} 
     from "../controllers/mentorshipRequestController.js"
 
 import {aprenantAutorisation, mentorAutorisation} from "../middelwares/jwt.js"   
@@ -15,3 +16,4 @@ mentorshipRequestRouter.post("/acceptMentorship",mentorAutorisation,acceptMentor
 mentorshipRequestRouter.put("/rejectMentorship",mentorAutorisation,rejectMentorshipRequest)
 mentorshipRequestRouter.get("/getMentorship/:id",mentorAutorisation,getMentorshipRequests)
 mentorshipRequestRouter.get("/getMentorshipAprenant/:id",aprenantAutorisation,getMentorshipRequestsApreant)
+mentorshipRequestRouter.get("/getRequest/:requestId", getMentorshipRequestById)

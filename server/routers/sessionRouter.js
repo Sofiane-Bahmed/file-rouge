@@ -1,8 +1,9 @@
 import  Express  from "express";
 
-import {launchMentoringSession} from "../controllers/sessionController.js"
+import {launchMentoringSession, getSessionsHistory} from "../controllers/sessionController.js"
 import {mentorAutorisation} from "../middelwares/jwt.js"
 
 export const sessionRouter = Express.Router()
 
 sessionRouter.post("/launchSession",launchMentoringSession)
+sessionRouter.get("/history/:userId", getSessionsHistory)

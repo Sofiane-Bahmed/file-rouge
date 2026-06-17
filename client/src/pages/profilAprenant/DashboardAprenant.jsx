@@ -6,7 +6,7 @@ import NavBar from "../../components/navbar/NavBar";
 import Footer from "../../components/footer/Footer";
 import ProgressComponent from "../../components/Progress";
 import Table from "../../components/Table";
-import { MdDashboard, MdAssignment, MdTimeline, MdChat, MdPersonSearch, MdSearch, MdVideocam } from 'react-icons/md';
+import { MdDashboard, MdAssignment, MdTimeline, MdChat, MdPersonSearch, MdSearch, MdVideocam, MdHistory } from 'react-icons/md';
 import DashboardSkeleton from './DashboardSkeleton';
 
 import ProfileSection from "../../components/profile/ProfileSection";
@@ -139,7 +139,7 @@ const DashboardAprenant = () => {
                       </div>
                       <button 
                         onClick={() => handleStartCall(req._id)}
-                        className="flex flex-col items-center justify-center p-4 bg-blue-600 text-white rounded-2xl hover:bg-blue-700 transition-all shadow-lg hover:shadow-blue-200 group/btn"
+                        className="flex flex-col items-center justify-center p-4 bg-[#007749] text-white rounded-2xl hover:bg-[#00663d] transition-all shadow-lg hover:shadow-green-200 group/btn"
                         title="Join Video Session"
                       >
                         <MdVideocam className="text-2xl group-hover/btn:scale-110 transition-transform mb-1" />
@@ -227,6 +227,12 @@ const DashboardAprenant = () => {
                     <MdChat className="text-[#007749] text-xl" />
                   </div>
                   <span className="font-bold text-sm">My Messages</span>
+                </Link>
+                <Link to="/session-history" className="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors text-gray-700 group">
+                  <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center group-hover:bg-blue-100 transition-colors">
+                    <MdHistory className="text-blue-600 text-xl" />
+                  </div>
+                  <span className="font-bold text-sm">Session History</span>
                 </Link>
               </div>
             </div>

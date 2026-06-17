@@ -12,6 +12,7 @@ import DashboardMentor from './pages/profilMentor/DashboardMentor';
 import ProfilAprenant from "./pages/profilAprenant/ProfilAprenant";
 import DashboardAprenant from './pages/profilAprenant/DashboardAprenant';
 import Messages from "./pages/messages/Messages";
+import SessionHistory from './pages/SessionHistory';
 import NotFound from './pages/page404';
 import About from "./pages/About";
 
@@ -74,6 +75,7 @@ function App() {
             <Route path="/dashboardAprenant/:aprenantId" element={<DashboardAprenant />} />
             <Route path="/profilMentor/:mentorId" element={<ProfilMentor />} />
             <Route path="/dashboardMentor/:mentorId" element={<DashboardMentor />} />
+            <Route path="/session-history" element={<SessionHistory />} />
           </Routes>
         </div>
       </VideoCallProvider>

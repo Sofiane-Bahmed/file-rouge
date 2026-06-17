@@ -6,7 +6,7 @@ import { acceptMentorship, rejectMentorship } from '../../api/requestService';
 import NavBar from "../../components/navbar/NavBar";
 import Footer from "../../components/footer/Footer";
 import Table from "../../components/Table";
-import { MdDashboard, MdPeople, MdStar, MdChat, MdPerson, MdCheck, MdClose, MdVisibility, MdVideocam } from 'react-icons/md';
+import { MdDashboard, MdPeople, MdStar, MdChat, MdPerson, MdCheck, MdClose, MdVisibility, MdVideocam, MdHistory } from 'react-icons/md';
 import DashboardMentorSkeleton from './DashboardMentorSkeleton';
 
 import ProfileSection from "../../components/profile/ProfileSection";
@@ -287,7 +287,7 @@ const DashboardMentor = () => {
                       </div>
                       <button 
                         onClick={() => handleStartCall(req._id)}
-                        className="p-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors shadow-md group"
+                        className="p-3 bg-[#007749] text-white rounded-xl hover:bg-[#00663d] transition-colors shadow-md group"
                         title="Start Video Call"
                       >
                         <MdVideocam className="text-xl group-hover:scale-110 transition-transform" />
@@ -323,6 +323,12 @@ const DashboardMentor = () => {
                     <MdChat className="text-[#007749] text-xl" />
                   </div>
                   <span className="font-bold text-sm">My Messages</span>
+                </Link>
+                <Link to="/session-history" className="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors text-gray-700 group">
+                  <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center group-hover:bg-blue-100 transition-colors">
+                    <MdHistory className="text-blue-600 text-xl" />
+                  </div>
+                  <span className="font-bold text-sm">Session History</span>
                 </Link>
                 <button 
                   onClick={() => setIsEditing(true)}

@@ -101,8 +101,25 @@ export const getMentorshipRequestsApreant = async (req, res) => {
 }
 
 
-// accept a mentorship request  
+// get a mentorship request by ID
+export const getMentorshipRequestById = async (req, res) => {
+  try {
+    const { requestId } = req.params;
+    const mentorshipRequest = await MentorshipRequest.findById(requestId)
+      .populate("aprenant")
+      .populate("mentor");
+    
+    if (!mentorshipRequest) {
+      return res.status(404).json({ message: "Mentorship request not found" });
+    }
 
+    res.status(200).json({ request: mentorshipRequest });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// accept a mentorship request  
 export const acceptMentorshipRequest = async (req, res) => {
   try {
     const { requestId, mentorId, responseMessage } = req.body;
