@@ -56,8 +56,8 @@ export const getSessionsHistory = async (req, res) => {
     // For now, let's just get the sessions and populate partner info
     
     const sessions = await Session.find(query)
-      .populate('mentor', 'firstName lastName email image')
-      .populate('aprenant', 'firstName lastName email image')
+      .populate('mentor', 'firstName lastName mail image')
+      .populate('aprenant', 'firstName lastName mail image')
       .sort({ date: -1, createdAt: -1 })
       .skip((page - 1) * limit)
       .limit(Number(limit));

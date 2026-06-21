@@ -8,7 +8,7 @@ import { MdHistory, MdCalendarToday, MdAccessTime, MdPerson, MdSearch, MdVideoca
 import { Link } from 'react-router-dom';
 
 const SessionHistory = () => {
-  const { localUser } = useAuth();
+  const { user: localUser } = useAuth();
   const [sessions, setSessions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
@@ -25,7 +25,7 @@ const SessionHistory = () => {
   const fetchSessions = async () => {
     setLoading(true);
     try {
-      const data = await getSessionHistory(localUser.userId, localUser.role, page, limit);
+      const data = await getSessionHistory(localUser.userId, localUser.userRole, page, limit);
       setSessions(data.sessions);
       setTotalPages(data.totalPages);
     } catch (error) {
@@ -36,7 +36,7 @@ const SessionHistory = () => {
   };
 
   const filteredSessions = sessions.filter(session => {
-    const partner = localUser.role === 'mentor' ? session.aprenant : session.mentor;
+    const partner = localUser.userRole === 'mentor' ? session.aprenant : session.mentor;
     const fullName = `${partner?.firstName} ${partner?.lastName}`.toLowerCase();
     return fullName.includes(searchTerm.toLowerCase());
   });
@@ -96,7 +96,7 @@ const SessionHistory = () => {
                   ))
                 ) : filteredSessions.length > 0 ? (
                   filteredSessions.map((session) => {
-                    const partner = localUser.role === 'mentor' ? session.aprenant : session.mentor;
+                    const partner = localUser.userRole === 'mentor' ? session.aprenant : session.mentor;
                     const date = new Date(session.date).toLocaleDateString('en-US', {
                       month: 'long', day: 'numeric', year: 'numeric'
                     });
@@ -120,7 +120,7 @@ const SessionHistory = () => {
                               <p className="font-bold text-gray-900 group-hover:text-[#007749] transition-colors leading-tight">
                                 {partner?.firstName} {partner?.lastName}
                               </p>
-                              <p className="text-xs text-gray-400 font-medium mt-0.5">{partner?.email}</p>
+                              <p className="text-xs text-gray-400 font-medium mt-0.5">{partner?.mail}</p>
                             </div>
                           </div>
                         </td>
