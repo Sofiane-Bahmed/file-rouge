@@ -22,10 +22,11 @@ export const getStreamToken = async (req, res) => {
 
     const client = new StreamClient(apiKey, apiSecret);
     
-    // validity_in_seconds is optional, defaults to 3600
+    // Offset issued-at to 24 hours in the past and validity to 30 days to bypass clock skew
     const token = client.generateUserToken({ 
       user_id: userId.toString(),
-      validity_in_seconds: 3600
+      validity_in_seconds: 30 * 24 * 60 * 60, // 30 days
+      iat: Math.floor(Date.now() / 1000) - 24 * 60 * 60 // 1 day ago
     });
 
     // If a requestId is provided, we ensure both participants are members of the call

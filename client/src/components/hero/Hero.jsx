@@ -1,11 +1,10 @@
+import { LayoutGroup } from 'framer-motion'
 
-import { TypeAnimation } from 'react-type-animation';
-
+import TextRotate from "../TextRotate"
 import Search from "../search/Search"
 import heroImage from "../../assets/heroImg.png"
 
 const Hero = () => {
-
     return (
         <div className='relative bg-[#f0f9f1] overflow-hidden'>
             <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-20 md:pt-10 md:pb-32 lg:pb-40">
@@ -18,34 +17,34 @@ const Hero = () => {
                     <div className='space-y-8 relative z-10'>
                         <div className='absolute -top-20 -left-20 blur-3xl h-[400px] w-[400px] bg-[#AAD4C1]/20 rounded-full -z-10'></div>
 
-                        <h1 className="text-4xl text-gray-900 font-extrabold sm:text-5xl lg:text-6xl leading-tight">
-                            Get mentorship on <br />
-                            <span className='text-[#007749]'>
-                                <TypeAnimation sequence={[
-                                    'web development',
-                                    1000,
-                                    'marketing',
-                                    1000,
-                                    'web design',
-                                    1000,
-                                    'Product management',
-                                    1000,
-                                    'Digital marketing',
-                                    1000,
-                                    'Data science',
-                                    1000,
-                                    'graphic design',
-                                    1000,
-                                    'Cybersecurity',
-                                    1000,
-                                ]}
-                                    speed={60}
-                                    className='text-accent'
-                                    wrapper='span'
-                                    repeat={Infinity}
+                        <LayoutGroup>
+                            <h1 className="text-4xl text-gray-900 font-extrabold sm:text-5xl lg:text-6xl leading-tight">
+                                Get mentorship on <br />
+                                <TextRotate
+                                    texts={[
+                                        'web development',
+                                        'marketing',
+                                        'web design',
+                                        'Product management',
+                                        'Digital marketing',
+                                        'Data science',
+                                        'graphic design',
+                                        'Cybersecurity',
+                                        'And much more...',
+                                    ]}
+                                    as="span"
+                                    mainClassName="text-[#007749] inline-flex overflow-hidden py-0.5 sm:py-1"
+                                    staggerFrom="last"
+                                    initial={{ y: "100%" }}
+                                    animate={{ y: 0 }}
+                                    exit={{ y: "-120%" }}
+                                    staggerDuration={0.025}
+                                    splitLevelClassName="overflow-hidden pb-0.5 sm:pb-1"
+                                    transition={{ type: "spring", damping: 30, stiffness: 400 }}
+                                    rotationInterval={2000}
                                 />
-                            </span>
-                        </h1>
+                            </h1>
+                        </LayoutGroup>
 
                         <p className="text-lg text-gray-600 max-w-lg">
                             Connect with expert mentors and accelerate your career. Our community of professionals is here to guide you through every step of your journey.
@@ -70,6 +69,4 @@ const Hero = () => {
     )
 }
 
-
 export default Hero;
-
